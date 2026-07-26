@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Bud Boss: Dispensary Tycoon</title>
+
+<!-- PWA / iOS home screen support -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f0a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bud Boss">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg: #0f0a1a;
+    --bg-panel: #1a1330;
+    --bg-panel2: #221a3d;
+    --accent-green: #7CFF3C;
+    --accent-green-dim: #4fbf22;
+    --accent-pink: #FF3CAC;
+    --accent-amber: #FFC145;
+    --text-main: #EDE9F7;
+    --text-dim: #9C93B8;
+    --border: rgba(124,255,60,0.22);
+    --danger: #FF5C5C;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{
+    margin:0; padding:0; height:100%; background:var(--bg); color:var(--text-main);
+    font-family:'Inter',sans-serif; overflow:hidden; overscroll-behavior:none;
+    -webkit-user-select:none; user-select:none;
+  }
+  #app{
+    display:flex; flex-direction:column; height:100vh; height:100dvh; max-width:520px; margin:0 auto;
+    background:
+      radial-gradient(ellipse at top, rgba(124,255,60,0.05), transparent 60%),
+      var(--bg);
+    position:relative;
+  }
+  .h1font{font-family:'Bungee',cursive; letter-spacing:0.5px;}
+  .num{font-family:'Space Mono',monospace;}
+
+  /* ---------- HEADER ---------- */
+  #header{
+    padding: calc(env(safe-area-inset-top,0px) + 10px) 14px 8px 14px;
+    background: linear-gradient(180deg, var(--bg-panel), rgba(26,19,48,0.4));
+    border-bottom:1px solid var(--border);
+    flex-shrink:0;
+    position:relative;
+    z-index:5;
+  }
+  #titleRow{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  #titleRow .brand{font-size:15px; display:flex; align-items:center; gap:6px;}
+  #titleRow .brand .sign{
+    color:var(--accent-green); text-shadow:0 0 8px var(--accent-green), 0 0 18px rgba(124,255,60,0.5);
+    animation: flicker 4s infinite;
+  }
+  @keyframes flicker{
+    0%,19%,21%,23%,80%,100%{opacity:1;}
+    20%,22%,81%{opacity:0.4;}
+  }
+  #dayBadge{font-size:11px; color:var(--text-dim); background:rgba(255,255,255,0.05); padding:3px 8px; border-radius:20px;}
+
+  .statsRow{display:flex; gap:8px;}
+  .statChip{
+    flex:1; background:var(--bg-panel2); border:1px solid rgba(255,255,255,0.06); border-radius:10px;
+    padding:6px 8px; display:flex; flex-direction:column; gap:2px; min-width:0;
+  }
+  .statChip .lbl{font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; display:flex; justify-content:space-between;}
+  .statChip .val{font-size:14px; font-weight:700;}
+  .cashVal{color:var(--accent-green);}
+  .barTrack{height:5px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin-top:2px;}
+  .barFill{height:100%; border-radius:4px; transition:width .3s;}
+  #heatFill{background:linear-gradient(90deg, var(--accent-amber), var(--danger));}
+  #xpFill{background:linear-gradient(90deg, var(--accent-green-dim), var(--accent-green));}
+
+  /* ---------- MAIN CONTENT ---------- */
+  #content{flex:1; overflow-y:auto; padding:14px 14px 10px 14px; -webkit-overflow-scrolling:touch;}
+  .screen{display:none; animation: fadeIn .25s ease;}
+  .screen.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .sectionTitle{font-family:'Bungee',cursive; font-size:14px; color:var(--accent-green); margin:0 0 10px 0; letter-spacing:0.5px;}
+  .sub{font-size:11px; color:var(--text-dim); margin:-6px 0 12px 0;}
+
+  .card{
+    background:var(--bg-panel); border:1px solid rgba(255,255,255,0.07); border-radius:14px;
+    padding:12px; margin-bottom:10px; position:relative;
+  }
+  .empty{
+    text-align:center; padding:30px 10px; color:var(--text-dim); font-size:13px;
+  }
+  .empty .emoji{font-size:32px; display:block; margin-bottom:8px;}
+
+  /* Customers */
+  .custCard{display:flex; align-items:center; gap:10px;}
+  .custAvatar{
+    width:44px; height:44px; border-radius:12px; background:var(--bg-panel2); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:22px; position:relative;
+  }
+  .custInfo{flex:1; min-width:0;}
+  .custInfo .name{font-size:13px; font-weight:600;}
+  .custInfo .want{font-size:11px; color:var(--text-dim); margin-top:2px;}
+  .custInfo .offer{font-size:12px; color:var(--accent-green); font-weight:700; margin-top:2px;}
+  .suspiciousTag{font-size:9px; color:var(--accent-amber); font-weight:700; text-transform:uppercase; letter-spacing:0.2px;}
+  .custInfo .stock{font-size:10px; margin-top:2px; font-weight:600;}
+  .custInfo .stock.ok{color:var(--text-dim);}
+  .custInfo .stock.low{color:var(--danger);}
+  .patienceTrack{height:3px; background:rgba(255,255,255,0.08); border-radius:3px; margin-top:6px; overflow:hidden;}
+  .patienceFill{height:100%; background:var(--accent-amber); transition:width 1s linear, background-color .3s;}
+  .patienceFill.warn{background:linear-gradient(90deg,#FFC145,#FF7A3C);}
+  .patienceFill.critical{background:var(--danger); animation:patiencePulse .5s infinite;}
+  @keyframes patiencePulse{0%,100%{opacity:1;} 50%{opacity:0.4;}}
+  .custActions{display:flex; flex-direction:column; gap:6px; flex-shrink:0;}
+
+  button{font-family:'Inter',sans-serif; border:none; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation;}
+  .btn{
+    padding:8px 12px; border-radius:9px; font-size:12px; font-weight:600; color:var(--bg);
+    background:var(--accent-green); transition:transform .1s;
+  }
+  .btn:active{transform:scale(0.94);}
+  .btn.secondary{background:var(--bg-panel2); color:var(--text-main); border:1px solid rgba(255,255,255,0.1);}
+  .btn.danger{background:var(--danger); color:#2a0000;}
+  .btn:disabled{opacity:0.35; cursor:default;}
+  .btn.small{padding:6px 10px; font-size:11px;}
+  .btn.full{width:100%;}
+
+  /* Grow room */
+  .potsGrid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+  .pot{
+    background:var(--bg-panel); border:1px solid rgba(255,255,255,0.07); border-radius:14px;
+    padding:10px; text-align:center; position:relative; overflow:hidden;
+  }
+  .pot.readyGlow{border-color:var(--accent-green); box-shadow:0 0 16px rgba(124,255,60,0.25);}
+  .pot.miteGlow{border-color:var(--accent-amber); box-shadow:0 0 16px rgba(255,193,69,0.3);}
+  .btn.miteBtn{background:var(--accent-amber); color:#3a2400;}
+  .pot .plantEmoji{font-size:34px; display:block; margin:6px 0; transition:transform .3s; filter:drop-shadow(0 0 6px rgba(124,255,60,0.15));}
+  .pot .plantName{font-size:11px; font-weight:600;}
+  .pot .stageLbl{font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;}
+  .pot .growTrack{height:5px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin:6px 0;}
+  .pot .growFill{height:100%; background:linear-gradient(90deg,var(--accent-green-dim),var(--accent-green));}
+  .pot .healthTrack{height:4px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin-bottom:6px;}
+  .pot .healthFill{height:100%; background:var(--accent-pink);}
+  .pot .healthFill.low{background:var(--danger);}
+  .lockedPot{display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; color:var(--text-dim); min-height:150px;}
+  .lockedPot .emoji{font-size:24px;}
+
+  /* Grow tents: same grid footprint as a single pot, 3 compact plant slots inside */
+  .pot.tentCard{padding:8px;}
+  .tentSlots{display:flex; flex-direction:column; gap:5px; margin-top:6px;}
+  .tentSlot{
+    background:var(--bg-panel2); border:1px solid rgba(255,255,255,0.07); border-radius:8px;
+    padding:5px 6px; display:flex; align-items:center; gap:6px;
+  }
+  .tentSlot.empty{justify-content:center;}
+  .tentSlot.ready{border-color:var(--accent-green); box-shadow:0 0 8px rgba(124,255,60,0.2);}
+  .tentSlot.infested{border-color:var(--accent-amber); box-shadow:0 0 8px rgba(255,193,69,0.2);}
+  .mini-emoji{font-size:16px; flex-shrink:0;}
+  .mini-name{font-size:9px; flex:1; min-width:0; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text-dim);}
+  .mini-track{width:34px; height:4px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; flex-shrink:0;}
+  .mini-fill{height:100%; background:linear-gradient(90deg,var(--accent-green-dim),var(--accent-green));}
+  .tentSlot .btn{padding:3px 7px; font-size:9px; flex-shrink:0;}
+  .seedPicker.mini{display:flex; flex-wrap:wrap; gap:3px; justify-content:center;}
+  .seedChip.mini{font-size:8px; padding:2px 5px;}
+
+  .seedPicker{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:6px;}
+  .seedChip{
+    font-size:10px; padding:4px 8px; border-radius:8px; background:var(--bg-panel2); color:var(--text-main);
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  .seedChip:disabled{opacity:0.3;}
+
+  /* Cure / inventory */
+  .jarRow{display:flex; align-items:center; gap:10px;}
+  .jarEmoji{font-size:28px; flex-shrink:0;}
+  .jarInfo{flex:1;}
+  .jarInfo .name{font-size:13px; font-weight:600;}
+  .jarInfo .meta{font-size:11px; color:var(--text-dim);}
+  .qualityTag{font-size:9px; padding:2px 7px; border-radius:20px; font-weight:700; text-transform:uppercase;}
+  .q-rough{background:rgba(255,92,92,0.15); color:var(--danger);}
+  .q-decent{background:rgba(255,193,69,0.15); color:var(--accent-amber);}
+  .q-fire{background:rgba(124,255,60,0.15); color:var(--accent-green);}
+  .q-legendary{background:rgba(255,60,172,0.18); color:var(--accent-pink);}
+
+  .invRow{display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:12px;}
+  .invRow:last-child{border-bottom:none;}
+
+  /* Upgrades */
+  .upgradeCard{display:flex; align-items:center; gap:10px;}
+  .upgradeCard.locked{opacity:0.55;}
+  .upgIcon{font-size:26px; width:40px; text-align:center; flex-shrink:0;}
+  .upgInfo{flex:1;}
+  .upgInfo .name{font-size:13px; font-weight:700;}
+  .upgInfo .desc{font-size:11px; color:var(--text-dim); margin:2px 0;}
+  .upgInfo .lvl{font-size:10px; color:var(--accent-green);}
+  .subHeading{font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.6px; font-weight:700; margin:4px 0 8px 0;}
+
+  /* Stats screen */
+  .statBig{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:13px;}
+  .statBig:last-child{border-bottom:none;}
+  .statBig .v{font-weight:700; color:var(--accent-green);}
+
+  /* Toasts */
+  #toastWrap{position:absolute; top:calc(env(safe-area-inset-top,0px) + 70px); left:0; right:0; display:flex; flex-direction:column; align-items:center; gap:6px; z-index:50; pointer-events:none;}
+  .toast{
+    background:rgba(20,15,35,0.95); border:1px solid var(--border); color:var(--text-main);
+    padding:8px 14px; border-radius:20px; font-size:12px; font-weight:600; box-shadow:0 4px 20px rgba(0,0,0,0.4);
+    animation: toastIn .3s ease, toastOut .3s ease 2.2s forwards;
+    max-width:85%; text-align:center;
+  }
+  .toast.good{color:var(--accent-green);}
+  .toast.bad{color:var(--danger);}
+  @keyframes toastIn{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);}}
+  @keyframes toastOut{to{opacity:0; transform:translateY(-10px);}}
+
+  /* Bust overlay */
+  #bustOverlay{
+    position:absolute; inset:0; background:rgba(180,20,20,0.35); z-index:60; display:none;
+    align-items:center; justify-content:center; animation: flashRed 0.6s ease-in-out 3;
+  }
+  @keyframes flashRed{0%,100%{background:rgba(180,20,20,0.15);} 50%{background:rgba(180,20,20,0.5);}}
+  #bustBox{background:var(--bg-panel); border:2px solid var(--danger); border-radius:16px; padding:22px; text-align:center; max-width:80%;}
+  #bustBox .emoji{font-size:40px;}
+  #bustBox h2{font-family:'Bungee',cursive; color:var(--danger); font-size:16px; margin:8px 0;}
+  #bustBox p{font-size:12px; color:var(--text-dim); margin:0 0 14px 0;}
+
+  /* Bottom nav */
+  #nav{
+    display:flex; background:var(--bg-panel); border-top:1px solid var(--border);
+    padding-bottom:env(safe-area-inset-bottom,0px); flex-shrink:0; z-index:5;
+  }
+  .navBtn{
+    flex:1; background:transparent; padding:9px 0 7px 0; display:flex; flex-direction:column; align-items:center; gap:2px;
+    color:var(--text-dim); font-size:9px; font-weight:600; position:relative;
+  }
+  .navBtn .ic{font-size:19px;}
+  .navBtn.active{color:var(--accent-green);}
+  .navBtn .dot{position:absolute; top:4px; right:calc(50% - 16px); width:7px; height:7px; border-radius:50%; background:var(--accent-pink); display:none;}
+  .navBtn .dot.show{display:block;}
+
+  /* Intro splash */
+  #splash{
+    position:absolute; inset:0; background:var(--bg); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:30px; text-align:center;
+  }
+  #splash h1{font-family:'Bungee',cursive; font-size:30px; color:var(--accent-green); text-shadow:0 0 20px rgba(124,255,60,0.4); margin:0;}
+  #splash h1 span{color:var(--accent-pink); text-shadow:0 0 20px rgba(255,60,172,0.4);}
+  #splash p{color:var(--text-dim); font-size:13px; max-width:280px; line-height:1.5;}
+  #splash .leaf{font-size:54px; animation: floaty 3s ease-in-out infinite;}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(-4deg);} 50%{transform:translateY(-10px) rotate(4deg);}}
+
+  ::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="splash">
+    <div class="leaf">🌿</div>
+    <h1>BUD <span>BOSS</span></h1>
+    <p>Build your dispensary empire. Grow premium strains, cure them to perfection, and serve every customer who walks through the door &mdash; just watch your heat.</p>
+    <button class="btn full" style="max-width:220px;" onclick="startGame()">Open Shop</button>
+  </div>
+
+  <div id="toastWrap"></div>
+
+  <div id="bustOverlay">
+    <div id="bustBox">
+      <div class="emoji">🚨</div>
+      <h2>BUSTED!</h2>
+      <p id="bustText"></p>
+      <button class="btn danger" onclick="closeBust()">Lay Low</button>
+    </div>
+  </div>
+
+  <div id="header">
+    <div id="titleRow">
+      <div class="brand"><span class="sign">●</span> <span class="h1font" style="font-size:14px;">BUD BOSS</span></div>
+      <div id="dayBadge">Day <span class="num" id="dayNum">1</span></div>
+    </div>
+    <div class="statsRow">
+      <div class="statChip">
+        <div class="lbl"><span>Cash</span></div>
+        <div class="val cashVal num" id="cashVal">$0</div>
+      </div>
+      <div class="statChip">
+        <div class="lbl"><span>Heat</span><span id="heatPct">0%</span></div>
+        <div class="barTrack"><div class="barFill" id="heatFill" style="width:0%"></div></div>
+      </div>
+      <div class="statChip">
+        <div class="lbl"><span>Lvl <span id="lvlNum">1</span></span><span id="xpPct">0%</span></div>
+        <div class="barTrack"><div class="barFill" id="xpFill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="content">
+
+    <!-- SHOP SCREEN -->
+    <div class="screen active" id="screen-shop">
+      <div class="sectionTitle">🏪 Storefront</div>
+      <div class="sub">Customers roll in and out. Serve them before they lose patience — a suspiciously generous offer might not be what it seems.</div>
+      <div id="customerList"></div>
+    </div>
+
+    <!-- GROW SCREEN -->
+    <div class="screen" id="screen-grow">
+      <div class="sectionTitle">🌱 Grow Room</div>
+      <div class="sub">Plant, water, and harvest your strains. Watch for mites once they start flowering.</div>
+      <div class="potsGrid" id="potsGrid"></div>
+    </div>
+
+    <!-- CURE / INVENTORY SCREEN -->
+    <div class="screen" id="screen-cure">
+      <div class="sectionTitle">🫙 Curing Jars</div>
+      <div class="sub">Fresh buds cure over time for a quality bonus.</div>
+      <div id="jarList"></div>
+
+      <div class="sectionTitle" style="margin-top:16px;">📦 Dried Inventory</div>
+      <div class="card" id="invCard"></div>
+    </div>
+
+    <!-- MARKET SCREEN -->
+    <div class="screen" id="screen-upgrades">
+      <div class="sectionTitle">🛒 Market</div>
+      <div class="sub">Spend cash on equipment upgrades and grow-room products.</div>
+      <div class="subHeading">Equipment</div>
+      <div id="upgradeList"></div>
+      <div class="subHeading" style="margin-top:16px;">Products</div>
+      <div id="productList"></div>
+    </div>
+
+    <!-- STATS SCREEN -->
+    <div class="screen" id="screen-stats">
+      <div class="sectionTitle">📊 Business Stats</div>
+      <div class="card">
+        <div class="statBig"><span>Total earned</span><span class="v num" id="statTotalEarned">$0</span></div>
+        <div class="statBig"><span>Total sales</span><span class="v num" id="statSales">0</span></div>
+        <div class="statBig"><span>Grams grown</span><span class="v num" id="statGrown">0</span></div>
+        <div class="statBig"><span>Times busted</span><span class="v num" id="statBusted">0</span></div>
+        <div class="statBig"><span>Reputation</span><span class="v num" id="statRep">0</span></div>
+      </div>
+      <div class="sectionTitle" style="margin-top:16px;">Unlocked Strains</div>
+      <div class="card" id="strainListCard"></div>
+      <div style="margin-top:16px;">
+        <button class="btn secondary full" onclick="if(confirm('Reset all progress? This cannot be undone.')) resetGame();">Reset Game</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="nav">
+    <button class="navBtn active" data-screen="shop" onclick="showScreen('shop')"><span class="ic">🏪</span>Shop<span class="dot" id="dotShop"></span></button>
+    <button class="navBtn" data-screen="grow" onclick="showScreen('grow')"><span class="ic">🌱</span>Grow<span class="dot" id="dotGrow"></span></button>
+    <button class="navBtn" data-screen="cure" onclick="showScreen('cure')"><span class="ic">🫙</span>Cure<span class="dot" id="dotCure"></span></button>
+    <button class="navBtn" data-screen="upgrades" onclick="showScreen('upgrades')"><span class="ic">🛒</span>Market</button>
+    <button class="navBtn" data-screen="stats" onclick="showScreen('stats')"><span class="ic">📊</span>Stats</button>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   BUD BOSS: DISPENSARY TYCOON
+   Single-file game logic
+============================================================ */
+
+const STRAINS = [
+  { id:'ditch',   name:'Ditch Weed',   unlockLvl:1, growTime:35,  yield:8,  price:6,  emoji:'🌿' },
+  { id:'green',   name:'Green Dream',  unlockLvl:2, growTime:55,  yield:10, price:9,  emoji:'🍀' },
+  { id:'purple',  name:'Purple Haze',  unlockLvl:3, growTime:75,  yield:9,  price:13, emoji:'🌸' },
+  { id:'blue',    name:'Blue Cheese',  unlockLvl:4, growTime:95,  yield:11, price:16, emoji:'💠' },
+  { id:'gold',    name:'Golden Kush',  unlockLvl:6, growTime:125, yield:10, price:22, emoji:'✨' },
+  { id:'cosmic',  name:'Cosmic OG',    unlockLvl:8, growTime:155, yield:12, price:30, emoji:'🌌' },
+];
+function strainById(id){ return STRAINS.find(s=>s.id===id); }
+
+const UPGRADES = {
+  light:    { name:'LED Lighting', icon:'💡', desc:'Faster grow cycles.', max:5, baseCost:120, costMul:1.9, effect:'-8% grow time' },
+  soil:     { name:'Super Soil',   icon:'🪱', desc:'Bigger harvests per plant.', max:5, baseCost:100, costMul:1.9, effect:'+10% yield' },
+  jars:     { name:'Weed Jars',    icon:'🫙', desc:'Faster curing — and more jars means more can cure at once.', max:5, baseCost:110, costMul:1.85, effect:'+ cure speed & +1 jar capacity' },
+  security: { name:'Security',     icon:'🛡️', desc:'Lower chance of undercover cops.', max:5, baseCost:150, costMul:2.0, effect:'-6% bust chance' },
+  runner:   { name:'Shop Runner',  icon:'🧑‍🌾', desc:'Auto-waters your plants so none wilt.', max:1, baseCost:250, costMul:1, effect:'Auto-watering' },
+};
+
+// Tables are the grow-room furniture. Every table starts Basic (1 pot slot)
+// and can be upgraded up this ladder as you level up — each upgrade goes to
+// whichever of your tables is least-upgraded. A Grow Tent still fits in one
+// table's footprint, same as before, just reframed as a tier on this ladder.
+const TABLE_TIERS = [
+  { name:'Basic Table',   capacity:1, unlockLvl:1  },
+  { name:'Two-Pot Table', capacity:2, unlockLvl:3  },
+  { name:'Grow Tent',     capacity:3, unlockLvl:5  },
+  { name:'Large Table',   capacity:5, unlockLvl:7  },
+  { name:'XXL Table',     capacity:8, unlockLvl:10 },
+];
+
+// Pots are physical, breakable items you place on a table before you can
+// plant a seed. Better pots handle higher-level strains but wear out faster.
+// Note: Master Pot isn't something you asked for directly — it's added so
+// strains above level 3 (Blue Cheese and up) have a pot capable of growing
+// them at all, since the brief only specified pots through level 3.
+const POT_TYPES = {
+  basic:    { name:'Basic Pot',    icon:'🪴', cost:60,  maxStrainLvl:1,  sessions:15, desc:'Grows level 1 strains. Sturdy enough for 15 grow sessions.' },
+  advanced: { name:'Advanced Pot', icon:'🏺', cost:140, maxStrainLvl:2,  sessions:10, desc:'Grows level 1-2 strains. Handles 10 grow sessions before breaking.' },
+  pro:      { name:'Pro Pot',      icon:'⚱️', cost:260, maxStrainLvl:3,  sessions:5,  desc:'Grows level 1-3 strains. Handles 5 grow sessions before breaking.' },
+  master:   { name:'Master Pot',   icon:'👑', cost:420, maxStrainLvl:99, sessions:3,  desc:'Grows any strain, but only lasts 3 grow sessions.' },
+};
+
+const PRODUCTS = {
+  fmites:   { name:'F-Mites Spray', icon:'🧪', kind:'cure',       cost:45,
+              desc:'Kills an active mite infestation so the plant can keep growing or be harvested.' },
+  moldbgon: { name:"Mold B'Gon",    icon:'🦠', kind:'cure',       cost:45,
+              desc:'Cures an active mold outbreak and saves the harvest.' },
+  killa:    { name:'Killa Spray',   icon:'🐝', kind:'preventive', cost:18,
+              desc:'Used before an outbreak starts, this prevents mites and mold for the rest of that grow. Has no effect once an outbreak has already hit.' },
+  pump1:    { name:'Da Pump',       icon:'💦', kind:'pump', duration:45,  cost:25,
+              desc:'Single-use — auto-waters a whole table for a while so you can focus elsewhere.' },
+  pump2:    { name:'Da Pump 2.0',   icon:'💦', kind:'pump', duration:80,  cost:50,
+              desc:'Auto-waters a table for even longer.' },
+  pump3:    { name:'Da Pump 3+',    icon:'💦', kind:'pump', duration:130, cost:85,
+              desc:'Auto-waters a table for the longest stretch.' },
+  gro1:     { name:'Weed Gro!',     icon:'🌿', kind:'gro', cutPct:0.20, cost:30,
+              desc:"Basic nutrient boost — instantly cuts a plant's remaining grow time." },
+  gro2:     { name:'Weed Gro! XL',  icon:'🌿', kind:'gro', cutPct:0.35, cost:60,
+              desc:'A bigger instant cut to remaining grow time.' },
+  gro3:     { name:'Weed Gro! XXL', icon:'🌿', kind:'gro', cutPct:0.50, cost:100,
+              desc:'The biggest instant cut to remaining grow time.' },
+};
+
+const XP_PER_LEVEL = lvl => lvl * 140;
+const QUALITY_TIERS = [
+  { min:0,  name:'Rough',     mul:0.75, cls:'q-rough' },
+  { min:35, name:'Decent',    mul:1.0,  cls:'q-decent' },
+  { min:70, name:'Fire',      mul:1.35, cls:'q-fire' },
+  { min:95, name:'Legendary', mul:1.75, cls:'q-legendary' },
+];
+function qualityTier(q){
+  let t = QUALITY_TIERS[0];
+  for(const tier of QUALITY_TIERS){ if(q>=tier.min) t=tier; }
+  return t;
+}
+
+const SAVE_KEY = 'budboss_save_v1';
+let state = null;
+let lastTick = Date.now();
+let customerIdSeq = 1;
+let bustQueued = null;
+
+function freshState(){
+  return {
+    cash: 120,
+    day: 1,
+    dayTimer: 0,
+    dayLength: 90, // seconds per in-game day
+    heat: 0,
+    level: 1,
+    xp: 0,
+    rep: 0,
+    upgrades: { pots:2, tent:0, light:0, soil:0, jars:0, security:0, runner:0 },
+    products: { fmites: 0 },
+    seeds: { ditch: 3 },
+    // each pot slot is an array of plant-slots: length 1 normally, length 3 once
+    // upgraded into a Grow Tent. Each entry is null or a plant object.
+    pots: [[null], [null]],
+    jars: [], // curing: {strainId, amount, startedAt, cureNeeded}
+    inventory: {}, // strainId -> { amount, quality }
+    customers: [],
+    customerTimer: 6,
+    stats: { totalEarned:0, sales:0, grown:0, busted:0 },
+    lastSaveTime: Date.now(),
+  };
+}
+
+// Migrates older saves (pre grow-tents/mites) into the current shape so
+// existing progress isn't lost.
+function migrateState(s){
+  if(!s.upgrades) s.upgrades = {};
+  if(s.upgrades.tent === undefined) s.upgrades.tent = 0;
+  if(!s.products) s.products = { fmites: 0 };
+  if(Array.isArray(s.pots)){
+    s.pots = s.pots.map(entry => Array.isArray(entry) ? entry : [entry===undefined?null:entry]);
+    s.pots.forEach(container=>{
+      container.forEach(p=>{
+        if(p){
+          if(p.mites===undefined) p.mites = false;
+          if(!p.miteRolls) p.miteRolls = { sprout:false, veg:false, flower:false };
+        }
+      });
+    });
+  }
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      migrateState(parsed);
+      return parsed;
+    }
+  }catch(e){ console.warn('load failed', e); }
+  return freshState();
+}
+function saveState(){
+  state.lastSaveTime = Date.now();
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){}
+}
+function resetGame(){
+  localStorage.removeItem(SAVE_KEY);
+  location.reload();
+}
+
+/* ---------------- TOASTS ---------------- */
+function toast(msg, type=''){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=>el.remove(), 2600);
+}
+
+/* ---------------- UNLOCKS ---------------- */
+function unlockedStrains(){
+  return STRAINS.filter(s => s.unlockLvl <= state.level);
+}
+
+/* ---------------- ECONOMY HELPERS ---------------- */
+function upgradeCost(key){
+  const u = UPGRADES[key];
+  const lvl = state.upgrades[key];
+  if(u.max===1) return u.baseCost;
+  return Math.round(u.baseCost * Math.pow(u.costMul, lvl));
+}
+function growTimeFor(strain){
+  const lightLvl = state.upgrades.light;
+  const mult = 1 - lightLvl*0.08;
+  return strain.growTime * Math.max(0.55, mult);
+}
+function yieldFor(strain){
+  const soilLvl = state.upgrades.soil;
+  return strain.yield * (1 + soilLvl*0.10);
+}
+function cureTimeFor(){
+  const jarLvl = state.upgrades.jars;
+  return Math.max(20, 45 - jarLvl*6);
+}
+function bustChance(){
+  const base = 0.04 + (state.heat/100)*0.34;
+  const reduction = state.upgrades.security*0.06;
+  return Math.max(0.01, base - reduction);
+}
+function addXp(amount){
+  state.xp += amount;
+  const needed = XP_PER_LEVEL(state.level);
+  while(state.xp >= needed){
+    state.xp -= XP_PER_LEVEL(state.level);
+    state.level++;
+    toast(`🎉 Level up! Now level ${state.level}`, 'good');
+    const newlyUnlocked = STRAINS.find(s=>s.unlockLvl===state.level);
+    if(newlyUnlocked) toast(`🔓 New strain unlocked: ${newlyUnlocked.name}`, 'good');
+  }
+}
+
+/* ---------------- GROW ROOM ---------------- */
+function potCapacity(i){ return i < state.upgrades.tent ? 3 : 1; }
+
+function plantSeed(potIndex, slotIndex, strainId){
+  if(state.seeds[strainId] <= 0) return;
+  const container = state.pots[potIndex];
+  if(!container || container[slotIndex]) return;
+  state.seeds[strainId]--;
+  container[slotIndex] = {
+    strainId, elapsed:0, health:100, harvestReady:false,
+    mites:false, miteRolls:{ sprout:false, veg:false, flower:false },
+  };
+  render();
+}
+function waterPot(potIndex, slotIndex){
+  const p = state.pots[potIndex] && state.pots[potIndex][slotIndex];
+  if(!p || p.harvestReady || p.mites) return;
+  p.health = Math.min(100, p.health + 25);
+  render();
+}
+function harvestPot(potIndex, slotIndex){
+  const p = state.pots[potIndex] && state.pots[potIndex][slotIndex];
+  if(!p || !p.harvestReady) return;
+  const strain = strainById(p.strainId);
+  const amt = Math.round(yieldFor(strain) * (p.health/100));
+  state.jars.push({ strainId:p.strainId, amount:amt, elapsed:0, cureNeeded:cureTimeFor() });
+  state.stats.grown += amt;
+  toast(`🌾 Harvested ${amt}g of ${strain.name}`, 'good');
+  state.pots[potIndex][slotIndex] = null;
+  render();
+}
+function sprayMites(potIndex, slotIndex){
+  const p = state.pots[potIndex] && state.pots[potIndex][slotIndex];
+  if(!p || !p.mites) return;
+  if(state.products.fmites <= 0){ toast('Buy F-Mites from the Market first', 'bad'); return; }
+  state.products.fmites--;
+  p.mites = false;
+  const strain = strainById(p.strainId);
+  const gt = growTimeFor(strain);
+  if(p.elapsed >= gt){
+    p.elapsed = gt;
+    p.harvestReady = true;
+    toast(`🧪 Sprayed clean! ${strain.name} is ready to harvest.`, 'good');
+  } else {
+    toast(`🧪 Sprayed clean! ${strain.name} is growing again.`, 'good');
+  }
+  render();
+}
+function buySeed(strainId){
+  const cost = Math.round(strainById(strainId).price * 1.4);
+  if(state.cash < cost){ toast('Not enough cash', 'bad'); return; }
+  state.cash -= cost;
+  state.seeds[strainId] = (state.seeds[strainId]||0) + 1;
+  toast(`Bought 1 ${strainById(strainId).name} seed`);
+  render();
+}
+function buyProduct(key){
+  const prod = PRODUCTS[key];
+  if(state.cash < prod.cost){ toast('Not enough cash', 'bad'); return; }
+  state.cash -= prod.cost;
+  state.products[key] = (state.products[key]||0) + 1;
+  toast(`Bought 1 ${prod.name}`, 'good');
+  render();
+}
+
+// Rolls a chance for mites when a plant crosses into a new growth stage.
+// Never rolls during the seedling stage. Chance band widens the further
+// along the plant is: sprouting is a small risk, vegetating a bit more,
+// and flowering carries the highest risk (up to 35%). Each stage only
+// rolls once per plant, and it's still entirely possible to grow a batch
+// mite-free — this is meant to be an occasional scare, not a certainty.
+function maybeRollMites(p, pct){
+  if(p.mites) return;
+  if(pct < 0.2) return; // seedling — safe
+  if(pct < 0.5){
+    if(p.miteRolls.sprout) return;
+    p.miteRolls.sprout = true;
+    if(Math.random()*100 < (1 + Math.random()*5)) infestPlant(p);
+  } else if(pct < 0.85){
+    if(p.miteRolls.veg) return;
+    p.miteRolls.veg = true;
+    if(Math.random()*100 < (4 + Math.random()*10)) infestPlant(p);
+  } else {
+    if(p.miteRolls.flower) return;
+    p.miteRolls.flower = true;
+    if(Math.random()*100 < (10 + Math.random()*25)) infestPlant(p);
+  }
+}
+function infestPlant(p){
+  p.mites = true;
+  const strain = strainById(p.strainId);
+  toast(`🐛 Mites spotted on your ${strain.name}!`, 'bad');
+}
+
+/* ---------------- CURING ---------------- */
+function collectJar(jarIndex){
+  const jar = state.jars[jarIndex];
+  if(!jar || jar.elapsed < jar.cureNeeded) return;
+  const quality = Math.min(100, Math.round((jar.elapsed/jar.cureNeeded)*60 + state.upgrades.jars*8));
+  if(!state.inventory[jar.strainId]) state.inventory[jar.strainId] = { amount:0, quality:0 };
+  const inv = state.inventory[jar.strainId];
+  // weighted average quality
+  const totalAmt = inv.amount + jar.amount;
+  inv.quality = totalAmt>0 ? Math.round((inv.quality*inv.amount + quality*jar.amount)/totalAmt) : quality;
+  inv.amount = totalAmt;
+  state.jars.splice(jarIndex,1);
+  toast(`📦 Cured ${jar.amount}g of ${strainById(jar.strainId).name}`, 'good');
+  render();
+}
+
+/* ---------------- CUSTOMERS ---------------- */
+function spawnCustomer(){
+  const unlocked = unlockedStrains();
+  if(unlocked.length===0) return;
+  const strain = unlocked[Math.floor(Math.random()*unlocked.length)];
+  const qty = Math.round(3 + Math.random()*10);
+  const isCop = Math.random() < bustChance();
+  // Cops tend to overpay to close the deal fast — a real tell, but not a
+  // guaranteed one. Occasionally a legit big spender does the same, so a
+  // generous offer is a strong hint rather than a certain giveaway.
+  let priceFactor;
+  if(isCop){
+    priceFactor = 1.25 + Math.random()*0.35; // 1.25x - 1.6x market rate
+  } else if(Math.random() < 0.08){
+    priceFactor = 1.2 + Math.random()*0.3; // rare legit big spender, same tell
+  } else {
+    priceFactor = 0.85 + Math.random()*0.35;
+  }
+  const offer = Math.round(strain.price * qty * priceFactor);
+  const suspicious = priceFactor >= 1.2;
+  const names = ['Jamie','Alex','Sam','Chris','Robin','Jordan','Taylor','Morgan','Casey','Riley','Drew','Skyler'];
+  const c = {
+    id: customerIdSeq++,
+    name: names[Math.floor(Math.random()*names.length)],
+    strainId: strain.id,
+    qty, offer, isCop, suspicious,
+    patience: 26, maxPatience: 26,
+  };
+  state.customers.push(c);
+}
+function serveCustomer(custId){
+  const idx = state.customers.findIndex(c=>c.id===custId);
+  if(idx<0) return;
+  const c = state.customers[idx];
+  const inv = state.inventory[c.strainId];
+  if(!inv || inv.amount < c.qty){
+    toast("You don't have enough in stock", 'bad');
+    return;
+  }
+  if(c.isCop){
+    // BUST
+    inv.amount -= c.qty; // confiscated anyway
+    const fine = Math.round(state.cash*0.18 + 40);
+    state.cash = Math.max(0, state.cash - fine);
+    state.heat = Math.min(100, state.heat + 25);
+    state.stats.busted++;
+    state.customers.splice(idx,1);
+    triggerBust(`An undercover cop caught the sale. You paid a $${fine} fine and lost the stock.`);
+    render();
+    return;
+  }
+  // Successful sale, quality affects final price
+  const qTier = qualityTier(inv.quality);
+  const finalPrice = Math.round(c.offer * qTier.mul);
+  inv.amount -= c.qty;
+  state.cash += finalPrice;
+  state.stats.totalEarned += finalPrice;
+  state.stats.sales++;
+  state.rep += 1;
+  state.heat = Math.min(100, state.heat + 3);
+  addXp(c.qty);
+  toast(`💰 Sold ${c.qty}g to ${c.name} for $${finalPrice}`, 'good');
+  state.customers.splice(idx,1);
+  render();
+}
+function declineCustomer(custId){
+  const idx = state.customers.findIndex(c=>c.id===custId);
+  if(idx<0) return;
+  state.customers.splice(idx,1);
+  state.rep = Math.max(0, state.rep-1);
+  render();
+}
+function triggerBust(text){
+  document.getElementById('bustText').textContent = text;
+  document.getElementById('bustOverlay').style.display = 'flex';
+}
+function closeBust(){
+  document.getElementById('bustOverlay').style.display = 'none';
+}
+
+/* ---------------- UPGRADES ---------------- */
+function buyUpgrade(key){
+  const u = UPGRADES[key];
+  if(u.unlockLvl && state.level < u.unlockLvl){ toast(`Unlocks at level ${u.unlockLvl}`, 'bad'); return; }
+  if(key==='tent' && state.upgrades.tent >= state.upgrades.pots){ toast('Buy more Grow Pots first', 'bad'); return; }
+  if(state.upgrades[key] >= u.max){ toast('Already maxed out'); return; }
+  const cost = upgradeCost(key);
+  if(state.cash < cost){ toast('Not enough cash', 'bad'); return; }
+  state.cash -= cost;
+  state.upgrades[key]++;
+  if(key==='pots') state.pots.push([null]);
+  if(key==='tent'){
+    const idx = state.upgrades.tent - 1; // pot just converted, in purchase order
+    const container = state.pots[idx];
+    while(container.length < 3) container.push(null);
+    toast(`⛺ Pot ${idx+1} upgraded to a Grow Tent!`, 'good');
+  } else {
+    toast(`Upgraded ${u.name}!`, 'good');
+  }
+  render();
+}
+
+/* ---------------- GAME LOOP ---------------- */
+function tick(dt){
+  // day timer
+  state.dayTimer += dt;
+  if(state.dayTimer >= state.dayLength){
+    state.dayTimer = 0;
+    state.day++;
+    const rent = 15 + state.upgrades.pots*4;
+    if(state.cash < rent){
+      toast(`📅 Day ${state.day} — couldn't cover the full $${rent} rent!`, 'bad');
+      state.heat = Math.min(100, state.heat + 8); // falling behind draws attention
+    } else {
+      toast(`📅 Day ${state.day} — paid $${rent} rent`);
+    }
+    state.cash = Math.max(0, state.cash - rent);
+    state.heat = Math.max(0, state.heat - 12);
+  }
+
+  // heat natural decay
+  state.heat = Math.max(0, state.heat - dt*0.15);
+
+  // customer spawn timer
+  state.customerTimer -= dt;
+  if(state.customerTimer <= 0 && state.customers.length < 4){
+    spawnCustomer();
+    state.customerTimer = 7 + Math.random()*8;
+  }
+  // customer patience
+  for(let i=state.customers.length-1;i>=0;i--){
+    const c = state.customers[i];
+    c.patience -= dt;
+    if(c.patience<=0){
+      state.customers.splice(i,1);
+      state.rep = Math.max(0, state.rep-1);
+    }
+  }
+
+  // pots growth
+  for(let i=0;i<state.pots.length;i++){
+    const container = state.pots[i];
+    for(let s=0;s<container.length;s++){
+      const p = container[s];
+      if(!p || p.harvestReady) continue;
+      const strain = strainById(p.strainId);
+      const gt = growTimeFor(strain);
+      // health decay if not watered recently; runner auto-waters
+      if(state.upgrades.runner>=1){
+        p.health = Math.min(100, p.health + dt*3);
+      } else {
+        p.health = Math.max(0, p.health - dt*0.8);
+      }
+      if(p.mites){
+        p.health = Math.max(0, p.health - dt*1.2); // pests do extra damage
+      }
+      if(p.health<=0){
+        container[s] = null;
+        continue;
+      }
+      // growth pauses entirely while infested — spraying is required to continue
+      if(!p.mites){
+        p.elapsed += dt * (p.health>40?1:0.4);
+      }
+      const pct = p.elapsed/gt;
+      maybeRollMites(p, pct);
+      if(p.elapsed >= gt && !p.mites){
+        p.elapsed = gt;
+        p.harvestReady = true;
+      }
+    }
+  }
+
+  // curing jars
+  for(const jar of state.jars){
+    jar.elapsed += dt;
+  }
+}
+
+// Simulation ticks frequently for smooth countdowns, but full list rebuilds
+// (which recreate button elements) only happen when something structural
+// actually changes — a customer arrives/leaves, a plant becomes harvestable,
+// or a jar finishes curing. Every other tick just slides progress bars and
+// updates text in place, never touching a button element. This matters on
+// iOS Safari: if the exact element under your finger gets removed from the
+// DOM before you lift it, the tap is silently dropped — even if a visually
+// identical button reappears in its place. Rebuilding on a timer (even a
+// slow one) meant an unlucky tap would occasionally get eaten; this avoids
+// that entirely for anything that isn't actually changing.
+let saveTimer = 0;
+let lastStructureSig = '';
+
+function structureSignature(){
+  const custSig = state.customers.map(c=>c.id).join(',');
+  const potSig = state.pots.map(container =>
+    container.map(p => p ? (p.mites?'M':(p.harvestReady?'R':'G')) : 'E').join('')
+  ).join('|');
+  const jarSig = state.jars.map(j=> j.elapsed>=j.cureNeeded ? 'R':'G').join(',');
+  return custSig+'||'+potSig+'||'+jarSig;
+}
+
+function simTick(){
+  const now = Date.now();
+  let dt = (now - lastTick)/1000;
+  lastTick = now;
+  dt = Math.min(dt, 2); // clamp huge jumps (tab backgrounded)
+  tick(dt);
+
+  const sig = structureSignature();
+  if(sig !== lastStructureSig){
+    render(); // structural change -> safe to rebuild, sets lastStructureSig itself
+  } else {
+    updateLiveBars(); // nothing added/removed/flipped -> just animate in place
+  }
+
+  saveTimer += dt;
+  if(saveTimer > 4){ saveTimer = 0; saveState(); }
+}
+
+/* ---------------- RENDER ---------------- */
+function fmtMoney(n){ return '$' + Math.round(n).toLocaleString(); }
+
+function updateHeaderAndDots(){
+  document.getElementById('cashVal').textContent = fmtMoney(state.cash);
+  document.getElementById('dayNum').textContent = state.day;
+  document.getElementById('heatPct').textContent = Math.round(state.heat)+'%';
+  document.getElementById('heatFill').style.width = state.heat + '%';
+  document.getElementById('lvlNum').textContent = state.level;
+  const xpNeeded = XP_PER_LEVEL(state.level);
+  document.getElementById('xpPct').textContent = Math.round((state.xp/xpNeeded)*100)+'%';
+  document.getElementById('xpFill').style.width = Math.min(100,(state.xp/xpNeeded)*100) + '%';
+
+  document.getElementById('dotShop').classList.toggle('show', state.customers.some(c=>c.patience/c.maxPatience<0.4));
+  document.getElementById('dotGrow').classList.toggle('show', state.pots.some(container=>container.some(p=>p && (p.harvestReady || p.mites))));
+  document.getElementById('dotCure').classList.toggle('show', state.jars.some(j=>j.elapsed>=j.cureNeeded));
+}
+
+// Lightweight per-tick update: only style.width / textContent on elements
+// that already exist. Never rebuilds innerHTML, so buttons are never
+// recreated and can't be swallowed mid-tap.
+function patienceClass(pct){
+  if(pct<=20) return 'critical';
+  if(pct<=50) return 'warn';
+  return '';
+}
+
+function updateLiveBars(){
+  updateHeaderAndDots();
+
+  state.customers.forEach(c=>{
+    const bar = document.querySelector(`.patienceFill[data-cid="${c.id}"]`);
+    if(bar){
+      const pct = Math.max(0,(c.patience/c.maxPatience)*100);
+      bar.style.width = pct+'%';
+      bar.classList.remove('warn','critical');
+      const cls = patienceClass(pct);
+      if(cls) bar.classList.add(cls);
+    }
+  });
+
+  state.pots.forEach((container,i)=>{
+    container.forEach((p,s)=>{
+      if(!p) return;
+      const key = `${i}_${s}`;
+      const strain = strainById(p.strainId);
+      const gt = growTimeFor(strain);
+      const pct = Math.min(100, (p.elapsed/gt)*100);
+      const growBar = document.querySelector(`[data-pot-grow="${key}"]`);
+      if(growBar) growBar.style.width = pct+'%';
+      const healthBar = document.querySelector(`[data-pot-health="${key}"]`);
+      if(healthBar){ healthBar.style.width = p.health+'%'; healthBar.classList.toggle('low', p.health<35); }
+      const stageLbl = document.querySelector(`[data-pot-stage="${key}"]`);
+      const emojiEl = document.querySelector(`[data-pot-emoji="${key}"]`);
+      if(stageLbl && emojiEl && !p.mites){
+        const info = stageInfo(p, strain);
+        stageLbl.textContent = info.label;
+        emojiEl.textContent = info.emoji;
+      }
+    });
+  });
+
+  state.jars.forEach((j,i)=>{
+    const pct = Math.min(100,(j.elapsed/j.cureNeeded)*100);
+    const bar = document.querySelector(`[data-jar-grow="${i}"]`);
+    if(bar) bar.style.width = pct+'%';
+    const meta = document.querySelector(`[data-jar-meta="${i}"]`);
+    if(meta) meta.textContent = j.elapsed>=j.cureNeeded ? 'Fully cured' : Math.round(pct)+'% cured';
+  });
+}
+
+function render(){
+  updateHeaderAndDots();
+
+  renderCustomers();
+  renderPots();
+  renderJarsAndInventory();
+  renderUpgrades();
+  renderProducts();
+  renderStats();
+
+  lastStructureSig = structureSignature();
+}
+
+function renderCustomers(){
+  const el = document.getElementById('customerList');
+  if(state.customers.length===0){
+    el.innerHTML = `<div class="empty"><span class="emoji">🚪</span>No customers right now.<br>Check back soon.</div>`;
+    return;
+  }
+  el.innerHTML = state.customers.map(c=>{
+    const strain = strainById(c.strainId);
+    const pct = Math.max(0,(c.patience/c.maxPatience)*100);
+    const haveAmt = state.inventory[c.strainId] ? state.inventory[c.strainId].amount : 0;
+    const haveEnough = haveAmt >= c.qty;
+    return `<div class="card custCard">
+      <div class="custAvatar">🧑</div>
+      <div class="custInfo">
+        <div class="name">${c.name}</div>
+        <div class="want">Wants ${c.qty}g of ${strain.emoji} ${strain.name}</div>
+        <div class="stock ${haveEnough?'ok':'low'}">In stock: ${haveAmt}g${haveEnough?'':' — need '+(c.qty-haveAmt)+'g more'}</div>
+        <div class="offer">Offering ${fmtMoney(c.offer)}${c.suspicious?' <span class="suspiciousTag">💰 suspiciously good?</span>':''}</div>
+        <div class="patienceTrack"><div class="patienceFill ${patienceClass(pct)}" data-cid="${c.id}" style="width:${pct}%"></div></div>
+      </div>
+      <div class="custActions">
+        <button class="btn small" ${haveEnough?'':'disabled'} onclick="serveCustomer(${c.id})">Sell</button>
+        <button class="btn small secondary" onclick="declineCustomer(${c.id})">Pass</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function stageInfo(p, strain){
+  const gt = growTimeFor(strain);
+  const pct = p.elapsed/gt;
+  if(p.harvestReady) return { emoji:'✨', label:'Ready!' };
+  if(pct<0.2) return { emoji:'🌰', label:'Seedling' };
+  if(pct<0.5) return { emoji:'🌱', label:'Sprouting' };
+  if(pct<0.85) return { emoji:'🍃', label:'Vegetating' };
+  return { emoji:'🌿', label:'Flowering' };
+}
+
+function renderPots(){
+  const el = document.getElementById('potsGrid');
+  let html = '';
+  for(let i=0;i<state.pots.length;i++){
+    const container = state.pots[i];
+    if(container.length > 1){
+      html += renderTentCard(i, container);
+      continue;
+    }
+    const p = container[0];
+    if(!p){
+      const unlocked = unlockedStrains().filter(s => (state.seeds[s.id]||0) > 0);
+      html += `<div class="pot">
+        <div class="lockedPot">
+          <span class="emoji">🪴</span>
+          <span style="font-size:11px;">Empty pot</span>
+          <div class="seedPicker">
+            ${unlocked.length? unlocked.map(s=>`<button class="seedChip" onclick="plantSeed(${i},0,'${s.id}')">${s.emoji} ${s.name} (${state.seeds[s.id]})</button>`).join('')
+              : `<span style="font-size:10px;color:var(--text-dim);">Buy seeds in Cure tab</span>`}
+          </div>
+        </div>
+      </div>`;
+      continue;
+    }
+    const strain = strainById(p.strainId);
+    const gt = growTimeFor(strain);
+    const pct = Math.min(100, (p.elapsed/gt)*100);
+    const info = p.mites ? { emoji:'🐛', label:'Mites!' } : stageInfo(p, strain);
+    let actionHtml;
+    if(p.mites){
+      actionHtml = `<button class="btn small full miteBtn" ${state.products.fmites>0?'':'disabled'} onclick="sprayMites(${i},0)">🧪 Spray F-Mites</button>`;
+    } else if(p.harvestReady){
+      actionHtml = `<button class="btn small full" onclick="harvestPot(${i},0)">Harvest</button>`;
+    } else {
+      actionHtml = `<button class="btn small secondary full" onclick="waterPot(${i},0)" ${state.upgrades.runner>=1?'disabled':''}>${state.upgrades.runner>=1?'Auto-watered':'💧 Water'}</button>`;
+    }
+    html += `<div class="pot ${p.harvestReady?'readyGlow':''} ${p.mites?'miteGlow':''}">
+      <div class="stageLbl" data-pot-stage="${i}_0">${info.label}</div>
+      <span class="plantEmoji" data-pot-emoji="${i}_0">${info.emoji}</span>
+      <div class="plantName">${strain.name}</div>
+      <div class="growTrack"><div class="growFill" data-pot-grow="${i}_0" style="width:${pct}%"></div></div>
+      <div class="healthTrack"><div class="healthFill ${p.health<35?'low':''}" data-pot-health="${i}_0" style="width:${p.health}%"></div></div>
+      ${actionHtml}
+    </div>`;
+  }
+  el.innerHTML = html;
+}
+
+// Grow tents keep the same grid footprint as a single pot, but hold 3
+// independent plant slots stacked compactly inside the one card.
+function renderTentCard(i, container){
+  const slotsHtml = container.map((p, s)=>{
+    if(!p){
+      const unlocked = unlockedStrains().filter(st => (state.seeds[st.id]||0) > 0);
+      return `<div class="tentSlot empty">
+        <span class="mini-emoji">🪴</span>
+        <div class="seedPicker mini">
+          ${unlocked.length? unlocked.map(st=>`<button class="seedChip mini" onclick="plantSeed(${i},${s},'${st.id}')">${st.emoji}${state.seeds[st.id]}</button>`).join('')
+            : `<span style="font-size:8px;color:var(--text-dim);">No seeds</span>`}
+        </div>
+      </div>`;
+    }
+    const strain = strainById(p.strainId);
+    const gt = growTimeFor(strain);
+    const pct = Math.min(100, (p.elapsed/gt)*100);
+    const info = p.mites ? { emoji:'🐛', label:'Mites' } : stageInfo(p, strain);
+    let actionHtml;
+    if(p.mites){
+      actionHtml = `<button class="btn small miteBtn" ${state.products.fmites>0?'':'disabled'} onclick="sprayMites(${i},${s})">🧪 Spray</button>`;
+    } else if(p.harvestReady){
+      actionHtml = `<button class="btn small" onclick="harvestPot(${i},${s})">Harvest</button>`;
+    } else {
+      actionHtml = `<button class="btn small secondary" onclick="waterPot(${i},${s})" ${state.upgrades.runner>=1?'disabled':''}>${state.upgrades.runner>=1?'Auto':'💧'}</button>`;
+    }
+    return `<div class="tentSlot ${p.harvestReady?'ready':''} ${p.mites?'infested':''}">
+      <span class="mini-emoji" data-pot-emoji="${i}_${s}">${info.emoji}</span>
+      <div class="mini-name">${strain.name}</div>
+      <div class="mini-track"><div class="mini-fill" data-pot-grow="${i}_${s}" style="width:${pct}%"></div></div>
+      ${actionHtml}
+    </div>`;
+  }).join('');
+  return `<div class="pot tentCard">
+    <div class="stageLbl">⛺ Grow Tent</div>
+    <div class="tentSlots">${slotsHtml}</div>
+  </div>`;
+}
+
+function renderJarsAndInventory(){
+  const jarEl = document.getElementById('jarList');
+  if(state.jars.length===0){
+    jarEl.innerHTML = `<div class="empty"><span class="emoji">🫙</span>No buds curing right now.<br>Harvest something in the Grow Room.</div>`;
+  } else {
+    jarEl.innerHTML = state.jars.map((j,i)=>{
+      const strain = strainById(j.strainId);
+      const pct = Math.min(100,(j.elapsed/j.cureNeeded)*100);
+      const ready = j.elapsed >= j.cureNeeded;
+      return `<div class="card jarRow">
+        <div class="jarEmoji">🫙</div>
+        <div class="jarInfo">
+          <div class="name">${j.amount}g ${strain.name}</div>
+          <div class="meta" data-jar-meta="${i}">${ready? 'Fully cured' : Math.round(pct)+'% cured'}</div>
+          <div class="growTrack"><div class="growFill" data-jar-grow="${i}" style="width:${pct}%"></div></div>
+        </div>
+        <button class="btn small" ${ready?'':'disabled'} onclick="collectJar(${i})">Collect</button>
+      </div>`;
+    }).join('');
+  }
+
+  const invEl = document.getElementById('invCard');
+  const entries = Object.entries(state.inventory).filter(([k,v])=>v.amount>0);
+  if(entries.length===0){
+    invEl.innerHTML = `<div class="empty" style="padding:10px;"><span class="emoji">📦</span>Inventory empty.</div>`;
+  } else {
+    invEl.innerHTML = entries.map(([id,v])=>{
+      const strain = strainById(id);
+      const tier = qualityTier(v.quality);
+      return `<div class="invRow">
+        <span>${strain.emoji} ${strain.name} — <b class="num">${v.amount}g</b></span>
+        <span class="qualityTag ${tier.cls}">${tier.name}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // seed shop appended at bottom of cure screen dynamically
+  let seedShop = document.getElementById('seedShopCard');
+  if(!seedShop){
+    seedShop = document.createElement('div');
+    seedShop.id = 'seedShopCard';
+    document.getElementById('screen-cure').appendChild(document.createElement('div')).outerHTML =
+      `<div class="sectionTitle" style="margin-top:16px;">🌱 Seed Shop</div><div class="card" id="seedShopCard"></div>`;
+    seedShop = document.getElementById('seedShopCard');
+  }
+  seedShop.innerHTML = unlockedStrains().map(s=>{
+    const cost = Math.round(s.price*1.4);
+    return `<div class="invRow">
+      <span>${s.emoji} ${s.name} <span style="color:var(--text-dim);">(own ${state.seeds[s.id]||0})</span></span>
+      <button class="btn small" ${state.cash<cost?'disabled':''} onclick="buySeed('${s.id}')">Buy ${fmtMoney(cost)}</button>
+    </div>`;
+  }).join('');
+}
+
+function renderUpgrades(){
+  const el = document.getElementById('upgradeList');
+  el.innerHTML = Object.keys(UPGRADES).map(key=>{
+    const u = UPGRADES[key];
+    const lvl = state.upgrades[key];
+    const locked = u.unlockLvl && state.level < u.unlockLvl;
+    const tentCapped = key==='tent' && state.upgrades.tent >= state.upgrades.pots;
+    const maxed = lvl >= u.max || tentCapped;
+    const cost = upgradeCost(key);
+
+    let btnLabel, btnDisabled;
+    if(locked){ btnLabel = `Lv.${u.unlockLvl}`; btnDisabled = true; }
+    else if(tentCapped && lvl < u.max){ btnLabel = 'Need pots'; btnDisabled = true; }
+    else if(maxed){ btnLabel = 'Max'; btnDisabled = true; }
+    else { btnLabel = fmtMoney(cost); btnDisabled = state.cash < cost; }
+
+    return `<div class="card upgradeCard ${locked?'locked':''}">
+      <div class="upgIcon">${u.icon}</div>
+      <div class="upgInfo">
+        <div class="name">${u.name} ${u.max>1? `<span class="lvl">Lv.${lvl}/${u.max}</span>`:(lvl>=1?'<span class="lvl">Owned</span>':'')}</div>
+        <div class="desc">${u.desc}</div>
+        <div class="desc" style="color:var(--accent-green);">${u.effect}</div>
+        ${locked? `<div class="desc" style="color:var(--accent-amber);">🔒 Unlocks at level ${u.unlockLvl}</div>` : ''}
+      </div>
+      <button class="btn small" ${btnDisabled?'disabled':''} onclick="buyUpgrade('${key}')">${btnLabel}</button>
+    </div>`;
+  }).join('');
+}
+
+function renderProducts(){
+  const el = document.getElementById('productList');
+  el.innerHTML = Object.keys(PRODUCTS).map(key=>{
+    const p = PRODUCTS[key];
+    const owned = state.products[key] || 0;
+    return `<div class="card upgradeCard">
+      <div class="upgIcon">${p.icon}</div>
+      <div class="upgInfo">
+        <div class="name">${p.name} <span class="lvl">Own ${owned}</span></div>
+        <div class="desc">${p.desc}</div>
+      </div>
+      <button class="btn small" ${state.cash<p.cost?'disabled':''} onclick="buyProduct('${key}')">Buy ${fmtMoney(p.cost)}</button>
+    </div>`;
+  }).join('');
+}
+
+function renderStats(){
+  document.getElementById('statTotalEarned').textContent = fmtMoney(state.stats.totalEarned);
+  document.getElementById('statSales').textContent = state.stats.sales;
+  document.getElementById('statGrown').textContent = Math.round(state.stats.grown)+'g';
+  document.getElementById('statBusted').textContent = state.stats.busted;
+  document.getElementById('statRep').textContent = state.rep;
+
+  const card = document.getElementById('strainListCard');
+  card.innerHTML = STRAINS.map(s=>{
+    const unlocked = s.unlockLvl <= state.level;
+    return `<div class="invRow">
+      <span>${unlocked?s.emoji:'🔒'} ${s.name}</span>
+      <span style="color:var(--text-dim);">${unlocked? fmtMoney(s.price)+'/g' : 'Unlocks at Lv.'+s.unlockLvl}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ---------------- NAV ---------------- */
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active', b.dataset.screen===name));
+}
+
+/* ---------------- BOOT ---------------- */
+function startGame(){
+  document.getElementById('splash').style.display = 'none';
+  boot();
+}
+function boot(){
+  state = loadState();
+  lastTick = Date.now();
+  render();
+  setInterval(simTick, 200);
+}
+
+// Register service worker for offline/PWA support
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
+// iOS rubber-band scrolling is handled via the `overscroll-behavior: none`
+// CSS rule on html/body above — no JS touchmove interception needed, since
+// intercepting touchmove globally risks swallowing taps on buttons.
+
+</script>
+</body>
+</html>
