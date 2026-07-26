@@ -67,6 +67,17 @@
     20%,22%,81%{opacity:0.4;}
   }
   #dayBadge{font-size:11px; color:var(--text-dim); background:rgba(255,255,255,0.05); padding:3px 8px; border-radius:20px;}
+  .headerRight{display:flex; align-items:center; gap:8px;}
+  .notifBtn{
+    position:relative; background:rgba(255,255,255,0.05); border:none; border-radius:50%;
+    width:28px; height:28px; font-size:14px; display:flex; align-items:center; justify-content:center;
+    color:var(--text-main);
+  }
+  .notifBtn .dot{
+    position:absolute; top:2px; right:2px; width:8px; height:8px; border-radius:50%;
+    background:var(--accent-pink); display:none; box-shadow:0 0 6px var(--accent-pink);
+  }
+  .notifBtn .dot.show{display:block;}
 
   .statsRow{display:flex; gap:8px;}
   .statChip{
@@ -100,6 +111,10 @@
   .empty .emoji{font-size:32px; display:block; margin-bottom:8px;}
 
   /* Customers */
+  .repCard{padding:10px 12px;}
+  .repRow{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .repLabel{font-size:11px; color:var(--text-dim); font-weight:600;}
+  #repFill{background:linear-gradient(90deg, var(--accent-pink), var(--accent-green));}
   .custCard{display:flex; align-items:center; gap:10px;}
   .custAvatar{
     width:44px; height:44px; border-radius:12px; background:var(--bg-panel2); flex-shrink:0;
@@ -132,52 +147,70 @@
   .btn.small{padding:6px 10px; font-size:11px;}
   .btn.full{width:100%;}
 
-  /* Grow room */
-  .potsGrid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
-  .pot{
-    background:var(--bg-panel); border:1px solid rgba(255,255,255,0.07); border-radius:14px;
-    padding:10px; text-align:center; position:relative; overflow:hidden;
+  /* Grow room: tables are a vertical list, each with a row of pot slots */
+  .potsGrid{display:flex; flex-direction:column; gap:12px;}
+  .tableCard{padding:12px;}
+  .tableHead{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  .tableName{font-size:12px; font-weight:700; display:flex; align-items:center; gap:6px;}
+  .tierTag{font-size:9px; font-weight:700; color:var(--accent-green); background:rgba(124,255,60,0.12); padding:2px 7px; border-radius:20px; text-transform:uppercase; letter-spacing:0.3px;}
+  .btn.pumpBtn{background:#3ca7ff; color:#001b33;}
+  .tableSlots{display:flex; flex-direction:column; gap:6px;}
+  .staffHereBadge{
+    font-size:10px; font-weight:700; color:var(--accent-green); background:rgba(124,255,60,0.1);
+    border:1px solid rgba(124,255,60,0.3); border-radius:20px; padding:4px 10px; margin-bottom:8px;
+    display:inline-block; animation: staffBadgeIn .3s ease;
   }
-  .pot.readyGlow{border-color:var(--accent-green); box-shadow:0 0 16px rgba(124,255,60,0.25);}
-  .pot.miteGlow{border-color:var(--accent-amber); box-shadow:0 0 16px rgba(255,193,69,0.3);}
-  .btn.miteBtn{background:var(--accent-amber); color:#3a2400;}
-  .pot .plantEmoji{font-size:34px; display:block; margin:6px 0; transition:transform .3s; filter:drop-shadow(0 0 6px rgba(124,255,60,0.15));}
-  .pot .plantName{font-size:11px; font-weight:600;}
-  .pot .stageLbl{font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;}
-  .pot .growTrack{height:5px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin:6px 0;}
-  .pot .growFill{height:100%; background:linear-gradient(90deg,var(--accent-green-dim),var(--accent-green));}
-  .pot .healthTrack{height:4px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin-bottom:6px;}
-  .pot .healthFill{height:100%; background:var(--accent-pink);}
-  .pot .healthFill.low{background:var(--danger);}
-  .lockedPot{display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; color:var(--text-dim); min-height:150px;}
-  .lockedPot .emoji{font-size:24px;}
+  @keyframes staffBadgeIn{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);}}
 
-  /* Grow tents: same grid footprint as a single pot, 3 compact plant slots inside */
-  .pot.tentCard{padding:8px;}
-  .tentSlots{display:flex; flex-direction:column; gap:5px; margin-top:6px;}
-  .tentSlot{
-    background:var(--bg-panel2); border:1px solid rgba(255,255,255,0.07); border-radius:8px;
-    padding:5px 6px; display:flex; align-items:center; gap:6px;
+  .slotRow{
+    background:var(--bg-panel2); border:1px solid rgba(255,255,255,0.07); border-radius:10px;
+    padding:8px; display:flex; align-items:center; gap:8px;
   }
-  .tentSlot.empty{justify-content:center;}
-  .tentSlot.ready{border-color:var(--accent-green); box-shadow:0 0 8px rgba(124,255,60,0.2);}
-  .tentSlot.infested{border-color:var(--accent-amber); box-shadow:0 0 8px rgba(255,193,69,0.2);}
-  .mini-emoji{font-size:16px; flex-shrink:0;}
-  .mini-name{font-size:9px; flex:1; min-width:0; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text-dim);}
-  .mini-track{width:34px; height:4px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; flex-shrink:0;}
+  .slotRow.emptySlot{justify-content:center;}
+  .slotRow.ready{border-color:var(--accent-green); box-shadow:0 0 10px rgba(124,255,60,0.2);}
+  .slotRow.infested{border-color:var(--accent-amber); box-shadow:0 0 10px rgba(255,193,69,0.2);}
+  .slotRow.moldy{border-color:#b98cff; box-shadow:0 0 10px rgba(185,140,255,0.25);}
+  .slotEmoji{font-size:24px; flex-shrink:0; filter:drop-shadow(0 0 5px rgba(124,255,60,0.15));}
+  .slotBody{flex:1; min-width:0;}
+  .slotLabelPlain{font-size:11px; color:var(--text-dim); margin-bottom:4px; text-align:center;}
+  .slotTop{display:flex; justify-content:space-between; align-items:baseline; gap:6px; margin-bottom:2px;}
+  .plantName{font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .sessTag{font-size:9px; color:var(--text-dim); flex-shrink:0; white-space:nowrap;}
+  .statusTag{font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.3px; display:block; margin-bottom:4px;}
+  .statusTag.moldTag{color:#b98cff;}
+  .statusTag.miteTag{color:var(--accent-amber);}
+  .statusTag.readyTag{color:var(--accent-green);}
+  .statusTag.dryTag{color:#3ca7ff;}
+
+  .mini-track{height:4px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-bottom:3px;}
   .mini-fill{height:100%; background:linear-gradient(90deg,var(--accent-green-dim),var(--accent-green));}
-  .tentSlot .btn{padding:3px 7px; font-size:9px; flex-shrink:0;}
-  .seedPicker.mini{display:flex; flex-wrap:wrap; gap:3px; justify-content:center;}
-  .seedChip.mini{font-size:8px; padding:2px 5px;}
+  .mini-fill.water-fill{background:linear-gradient(90deg,#1c7bd1,#3ca7ff);}
+  .mini-fill.health-fill{background:var(--accent-pink);}
+  .mini-fill.health-fill.low{background:var(--danger);}
+
+  .slotActions{display:flex; flex-direction:column; gap:4px; flex-shrink:0; align-items:stretch;}
+  .slotActions .btn{padding:5px 9px; font-size:10px; white-space:nowrap;}
+  .utilRow{display:flex; gap:4px;}
+  .btn.miteBtn{background:var(--accent-amber); color:#3a2400;}
+  .btn.moldBtn{background:#b98cff; color:#2a0d4d;}
+  .btn.killaBtn{background:var(--bg-panel); color:var(--accent-amber); border:1px solid var(--accent-amber);}
+  .btn.groBtn{background:var(--bg-panel); color:var(--accent-green); border:1px solid var(--accent-green);}
+  .btn.trashBtn{color:var(--danger); border-color:rgba(255,92,92,0.35);}
+  .btn.waterBtn{}
 
   .seedPicker{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:6px;}
+  .seedPicker.mini{display:flex; flex-wrap:wrap; gap:4px; justify-content:flex-start;}
   .seedChip{
     font-size:10px; padding:4px 8px; border-radius:8px; background:var(--bg-panel2); color:var(--text-main);
     border:1px solid rgba(255,255,255,0.08);
   }
+  .seedChip.mini{font-size:9px; padding:3px 7px; background:var(--bg-panel);}
   .seedChip:disabled{opacity:0.3;}
+  .mutedNote{font-size:9px; color:var(--text-dim);}
+  .warnNote{color:var(--accent-amber) !important; font-weight:600;}
 
   /* Cure / inventory */
+  .cureHeadRow{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
   .jarRow{display:flex; align-items:center; gap:10px;}
   .jarEmoji{font-size:28px; flex-shrink:0;}
   .jarInfo{flex:1;}
@@ -217,8 +250,11 @@
   }
   .toast.good{color:var(--accent-green);}
   .toast.bad{color:var(--danger);}
+  .toastCount{font-family:'Space Mono',monospace; font-weight:700; opacity:0.75; font-size:10px;}
+  .toast.toastBump{animation: toastIn .3s ease, toastPop .25s ease, toastOut .3s ease 2.2s forwards;}
   @keyframes toastIn{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);}}
   @keyframes toastOut{to{opacity:0; transform:translateY(-10px);}}
+  @keyframes toastPop{0%{transform:scale(1);} 40%{transform:scale(1.06);} 100%{transform:scale(1);}}
 
   /* Bust overlay */
   #bustOverlay{
@@ -230,6 +266,91 @@
   #bustBox .emoji{font-size:40px;}
   #bustBox h2{font-family:'Bungee',cursive; color:var(--danger); font-size:16px; margin:8px 0;}
   #bustBox p{font-size:12px; color:var(--text-dim); margin:0 0 14px 0;}
+
+  /* Generic modal overlay (notifications, level-up) */
+  .modalOverlay{
+    position:absolute; inset:0; background:rgba(8,6,16,0.72); z-index:70; display:none;
+    align-items:center; justify-content:center; padding:24px;
+  }
+  .modalBox{
+    position:relative; background:var(--bg-panel); border-radius:18px; padding:22px;
+    max-width:100%; width:340px; text-align:center;
+  }
+  .modalCloseX{
+    position:absolute; top:10px; right:12px; background:transparent; border:none;
+    color:var(--text-dim); font-size:18px; line-height:1; padding:4px;
+    opacity:0; pointer-events:none; transition:opacity .4s ease;
+  }
+  .modalCloseX.visible{opacity:1; pointer-events:auto;}
+
+  /* Notifications panel */
+  .notifBox{border:1px solid var(--border); max-height:70vh; display:flex; flex-direction:column;}
+  .notifHead{font-size:14px; color:var(--accent-green); margin-bottom:12px; text-align:left;}
+  .notifListWrap{overflow-y:auto; text-align:left; display:flex; flex-direction:column; gap:6px;}
+  .notifRow{
+    background:var(--bg-panel2); border-radius:10px; padding:8px 10px; font-size:11px;
+    display:flex; gap:8px; align-items:baseline;
+  }
+  .notifRow.good{border-left:2px solid var(--accent-green);}
+  .notifRow.bad{border-left:2px solid var(--danger);}
+  .notifRow .notifDay{font-size:9px; color:var(--text-dim); flex-shrink:0; white-space:nowrap;}
+  .notifRow .notifMsg{color:var(--text-main);}
+  .notifCount{color:var(--accent-pink); font-family:'Space Mono',monospace; font-size:10px;}
+
+  /* Level-up celebration modal */
+  #levelUpOverlay .modalBox.levelUpBox{
+    border:2px solid var(--accent-green); box-shadow:0 0 50px rgba(124,255,60,0.35);
+    background:radial-gradient(circle at 50% 20%, rgba(124,255,60,0.14), var(--bg-panel) 65%);
+    padding:32px 26px; animation: levelUpPopIn .45s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes levelUpPopIn{from{opacity:0; transform:scale(.7);} to{opacity:1; transform:scale(1);}}
+  .levelUpBadge{position:relative; width:110px; height:110px; margin:0 auto 14px; display:flex; align-items:center; justify-content:center;}
+  .levelUpRays{
+    position:absolute; inset:0; border-radius:50%; filter:blur(3px);
+    background:conic-gradient(from 0deg, rgba(124,255,60,0.55), transparent 18%, rgba(124,255,60,0.55) 38%, transparent 58%, rgba(124,255,60,0.55) 78%, transparent 98%);
+    animation: levelUpSpin 5s linear infinite;
+  }
+  @keyframes levelUpSpin{to{transform:rotate(360deg);}}
+  .levelUpNum{
+    position:relative; font-family:'Bungee',cursive; font-size:48px; color:var(--accent-green);
+    text-shadow:0 0 22px rgba(124,255,60,0.8); animation: levelUpPulse 1s ease-in-out infinite alternate;
+  }
+  @keyframes levelUpPulse{from{transform:scale(1);} to{transform:scale(1.08);}}
+  .levelUpTitle{font-size:20px; color:var(--accent-green); letter-spacing:1.5px; text-shadow:0 0 14px rgba(124,255,60,0.5);}
+  .levelUpUnlocks{font-size:11px; color:var(--text-dim); margin-top:10px; min-height:14px; line-height:1.9; text-align:left; max-height:180px; overflow-y:auto;}
+  .levelUpUnlocks b{color:var(--text-main);}
+  .levelUpCat{font-size:9px; color:var(--accent-green); background:rgba(124,255,60,0.12); padding:1px 6px; border-radius:20px; text-transform:uppercase; letter-spacing:0.3px;}
+
+  /* Staff warning modal */
+  .staffWarnBox{border:2px solid var(--accent-amber); padding:24px;}
+  .staffWarnEmoji{font-size:34px; margin-bottom:8px;}
+  .staffWarnBox p{font-size:13px; color:var(--text-main); margin:0 0 16px 0; line-height:1.4;}
+
+  /* Staff for Hire */
+  .staffCard{display:flex; align-items:center; gap:10px;}
+  .staffCard.locked{opacity:0.55;}
+
+  /* Dev console */
+  .devBox{border:1px solid rgba(255,255,255,0.15); text-align:left;}
+  .devTitle{font-size:16px; color:var(--accent-pink); margin-bottom:6px; text-align:center;}
+  .devInput{
+    width:100%; background:var(--bg-panel2); border:1px solid rgba(255,255,255,0.12); border-radius:8px;
+    color:var(--text-main); font-family:'Space Mono',monospace; font-size:14px; padding:9px 10px; margin-top:4px;
+  }
+  .devField{margin-bottom:10px;}
+  .devField label{font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px;}
+  .devError{font-size:11px; color:var(--danger); min-height:14px; margin-top:6px;}
+  .resetBox{border:2px solid var(--danger);}
+  .resetWarning{font-size:12px; color:var(--text-dim); line-height:1.5; margin:8px 0 14px 0;}
+  .resetLabel{font-size:10px; color:var(--danger); text-transform:uppercase; letter-spacing:0.5px; font-weight:700;}
+  .devDivider{height:1px; background:rgba(255,255,255,0.1); margin:16px 0;}
+  .devCheckboxRow{display:flex; align-items:flex-start; gap:8px; cursor:pointer;}
+  .devCheckboxRow input{margin-top:3px; flex-shrink:0;}
+  .devCheckboxRow b{font-size:12px; color:var(--accent-pink);}
+  .devCheckboxDesc{font-size:10px; color:var(--text-dim); margin-top:3px; line-height:1.4;}
+  .staffRoleTitle{font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin:10px 0 6px 0;}
+  .staffTimeLeft{font-size:9px; color:var(--accent-green);}
+  .staffFlavor{font-size:10px; color:var(--text-dim); margin:2px 0; line-height:1.3;}
 
   /* Bottom nav */
   #nav{
@@ -279,10 +400,97 @@
     </div>
   </div>
 
+  <div id="notifOverlay" class="modalOverlay">
+    <div class="modalBox notifBox">
+      <button class="modalCloseX visible" onclick="closeNotifications()">✕</button>
+      <div class="notifHead h1font">🔔 Notifications</div>
+      <div id="notifList" class="notifListWrap"></div>
+    </div>
+  </div>
+
+  <div id="levelUpOverlay" class="modalOverlay">
+    <div class="modalBox levelUpBox">
+      <button id="levelUpCloseBtn" class="modalCloseX" onclick="closeLevelUpModal()">✕</button>
+      <div class="levelUpBadge">
+        <div class="levelUpRays"></div>
+        <div class="levelUpNum" id="levelUpNum">1</div>
+      </div>
+      <div class="levelUpTitle h1font">LEVEL UP!</div>
+      <div class="levelUpUnlocks" id="levelUpUnlocks"></div>
+    </div>
+  </div>
+
+  <div id="staffWarnOverlay" class="modalOverlay">
+    <div class="modalBox staffWarnBox">
+      <div class="staffWarnEmoji">🗣️</div>
+      <p id="staffWarnText"></p>
+      <button class="btn secondary" onclick="closeStaffWarn()">Got it</button>
+    </div>
+  </div>
+
+  <div id="devPasswordOverlay" class="modalOverlay">
+    <div class="modalBox devBox">
+      <button class="modalCloseX visible" onclick="closeDevPassword()">✕</button>
+      <div class="devTitle h1font">🛠️ Dev Console</div>
+      <div class="sub" style="margin:0 0 12px 0;">Enter the developer password to continue.</div>
+      <input id="devPasswordInput" class="devInput" type="password" placeholder="Password" onkeydown="if(event.key==='Enter') submitDevPassword();">
+      <div id="devPasswordError" class="devError"></div>
+      <button class="btn full" style="margin-top:10px;" onclick="submitDevPassword()">Unlock</button>
+    </div>
+  </div>
+
+  <div id="devConsoleOverlay" class="modalOverlay">
+    <div class="modalBox devBox">
+      <button class="modalCloseX visible" onclick="closeDevConsole()">✕</button>
+      <div class="devTitle h1font">🛠️ Dev Console</div>
+      <div class="devField">
+        <label>Cash ($)</label>
+        <input id="devCashInput" class="devInput" type="number">
+      </div>
+      <div class="devField">
+        <label>Level</label>
+        <input id="devLevelInput" class="devInput" type="number" min="1">
+      </div>
+      <div class="devField">
+        <label>Day</label>
+        <input id="devDayInput" class="devInput" type="number" min="1">
+      </div>
+      <div class="devField">
+        <label>Reputation (0-100)</label>
+        <input id="devRepInput" class="devInput" type="number" min="0" max="100">
+      </div>
+      <div class="sub" style="margin:6px 0 0 0;">Lowering level re-locks anything in the Market that requires a higher level.</div>
+      <button class="btn full" style="margin-top:12px;" onclick="applyDevConsole()">Apply</button>
+
+      <div class="devDivider"></div>
+      <label class="devCheckboxRow">
+        <input type="checkbox" id="devUnlockAllCheckbox" onchange="toggleUnlockAll(this)">
+        <span>
+          <b>Unlock All</b>
+          <div class="devCheckboxDesc">Maxes every table, gives a pile of Master Pots, maxes equipment, stocks every product, and hires the best staff in every role. Unchecking restores everything exactly as it was before you checked it.</div>
+        </span>
+      </label>
+    </div>
+  </div>
+
+  <div id="resetOverlay" class="modalOverlay">
+    <div class="modalBox resetBox">
+      <button class="modalCloseX visible" onclick="closeResetModal()">✕</button>
+      <div class="devTitle h1font" style="color:var(--danger);">⚠️ Erase Everything?</div>
+      <p class="resetWarning">This permanently erases every single piece of data stored for this game — cash, level, the entire grow room, staff, all of it — and resets your progress and level progression back to zero. This cannot be undone.</p>
+      <label class="resetLabel">Type ERASE to confirm</label>
+      <input id="resetConfirmInput" class="devInput" type="text" autocomplete="off" autocapitalize="characters" placeholder="ERASE" oninput="checkResetInput()">
+      <button id="resetConfirmBtn" class="btn full danger" style="display:none; margin-top:10px;" onclick="confirmReset()">ERASE</button>
+    </div>
+  </div>
+
   <div id="header">
     <div id="titleRow">
-      <div class="brand"><span class="sign">●</span> <span class="h1font" style="font-size:14px;">BUD BOSS</span></div>
-      <div id="dayBadge">Day <span class="num" id="dayNum">1</span></div>
+      <div class="brand" onclick="handleLogoClick()"><span class="sign">●</span> <span class="h1font" style="font-size:14px;">BUD BOSS</span></div>
+      <div class="headerRight">
+        <div id="dayBadge">Day <span class="num" id="dayNum">1</span></div>
+        <button id="notifBtn" class="notifBtn" onclick="openNotifications()">🔔<span class="dot" id="notifDot"></span></button>
+      </div>
     </div>
     <div class="statsRow">
       <div class="statChip">
@@ -306,20 +514,34 @@
     <div class="screen active" id="screen-shop">
       <div class="sectionTitle">🏪 Storefront</div>
       <div class="sub">Customers roll in and out. Serve them before they lose patience — a suspiciously generous offer might not be what it seems.</div>
+
+      <div class="card repCard">
+        <div class="repRow">
+          <span class="repLabel">Reputation <span class="num" id="repNum">0</span>/100</span>
+          <button id="shopToggleBtn" class="btn small" onclick="toggleShop()">Open Shop</button>
+        </div>
+        <div class="barTrack"><div class="barFill" id="repFill" style="width:0%"></div></div>
+        <div class="sub" id="repNote" style="margin:6px 0 0 0;"></div>
+      </div>
+
       <div id="customerList"></div>
     </div>
 
     <!-- GROW SCREEN -->
     <div class="screen" id="screen-grow">
       <div class="sectionTitle">🌱 Grow Room</div>
-      <div class="sub">Plant, water, and harvest your strains. Watch for mites once they start flowering.</div>
+      <div class="sub">Place a pot on each table, plant a seed, then keep it watered. Watch for mites once flowering starts, and don't let a ready plant sit too long or mold can set in.</div>
       <div class="potsGrid" id="potsGrid"></div>
     </div>
 
     <!-- CURE / INVENTORY SCREEN -->
     <div class="screen" id="screen-cure">
-      <div class="sectionTitle">🫙 Curing Jars</div>
+      <div class="cureHeadRow">
+        <div class="sectionTitle" style="margin:0;">🫙 Curing Jars</div>
+        <button id="collectAllBtn" class="btn small" style="display:none;" onclick="collectAllJars()">Collect All</button>
+      </div>
       <div class="sub">Fresh buds cure over time for a quality bonus.</div>
+      <div class="sub" id="jarCapacityNote"></div>
       <div id="jarList"></div>
 
       <div class="sectionTitle" style="margin-top:16px;">📦 Dried Inventory</div>
@@ -329,11 +551,18 @@
     <!-- MARKET SCREEN -->
     <div class="screen" id="screen-upgrades">
       <div class="sectionTitle">🛒 Market</div>
-      <div class="sub">Spend cash on equipment upgrades and grow-room products.</div>
-      <div class="subHeading">Equipment</div>
+      <div class="sub">Spend cash on tables, pots, equipment upgrades, and grow-room products.</div>
+      <div class="subHeading">Tables</div>
+      <div id="tableShopCard"></div>
+      <div class="subHeading" style="margin-top:16px;">Pots</div>
+      <div id="potShopCard"></div>
+      <div class="subHeading" style="margin-top:16px;">Equipment</div>
       <div id="upgradeList"></div>
       <div class="subHeading" style="margin-top:16px;">Products</div>
       <div id="productList"></div>
+      <div class="subHeading" style="margin-top:16px;">Staff for Hire</div>
+      <div class="sub" style="margin-top:-4px;">Hires cost a lot more up front, but they work for you for a limited time before their contract ends.</div>
+      <div id="staffShopCard"></div>
     </div>
 
     <!-- STATS SCREEN -->
@@ -349,7 +578,7 @@
       <div class="sectionTitle" style="margin-top:16px;">Unlocked Strains</div>
       <div class="card" id="strainListCard"></div>
       <div style="margin-top:16px;">
-        <button class="btn secondary full" onclick="if(confirm('Reset all progress? This cannot be undone.')) resetGame();">Reset Game</button>
+        <button class="btn secondary full" onclick="openResetModal()">Reset Game</button>
       </div>
     </div>
 
@@ -381,13 +610,20 @@ const STRAINS = [
 ];
 function strainById(id){ return STRAINS.find(s=>s.id===id); }
 
+// Security and Shop Runner used to live here as permanent equipment, but
+// both are now fully covered by hiring the equivalent staff (a Security
+// hire and a Grower hire respectively) — so they've been removed to avoid
+// two redundant systems doing the same job.
 const UPGRADES = {
-  light:    { name:'LED Lighting', icon:'💡', desc:'Faster grow cycles.', max:5, baseCost:120, costMul:1.9, effect:'-8% grow time' },
-  soil:     { name:'Super Soil',   icon:'🪱', desc:'Bigger harvests per plant.', max:5, baseCost:100, costMul:1.9, effect:'+10% yield' },
-  jars:     { name:'Weed Jars',    icon:'🫙', desc:'Faster curing — and more jars means more can cure at once.', max:5, baseCost:110, costMul:1.85, effect:'+ cure speed & +1 jar capacity' },
-  security: { name:'Security',     icon:'🛡️', desc:'Lower chance of undercover cops.', max:5, baseCost:150, costMul:2.0, effect:'-6% bust chance' },
-  runner:   { name:'Shop Runner',  icon:'🧑‍🌾', desc:'Auto-waters your plants so none wilt.', max:1, baseCost:250, costMul:1, effect:'Auto-watering' },
+  light: { name:'LED Lighting', icon:'💡', desc:'Faster grow cycles.', max:100, baseCost:120, costMul:1.045, effect:'-8% grow time per level (capped)' },
+  soil:  { name:'Super Soil',   icon:'🪱', desc:'Bigger harvests per plant.', max:100, baseCost:100, costMul:1.045, effect:'+10% yield per level' },
+  jars:  { name:'Weed Jars',    icon:'🫙', desc:'Faster curing — and more jars means more can cure at once.', max:100, baseCost:110, costMul:1.045, effect:'+ cure speed & +1 jar capacity per level' },
 };
+// Equipment can't be spammed with cash alone — each level is also capped by
+// your player level, so you have to keep leveling up to keep upgrading.
+function maxUpgradeLevelForPlayer(){
+  return state.level;
+}
 
 // Tables are the grow-room furniture. Every table starts Basic (1 pot slot)
 // and can be upgraded up this ladder as you level up — each upgrade goes to
@@ -407,32 +643,81 @@ const TABLE_TIERS = [
 // strains above level 3 (Blue Cheese and up) have a pot capable of growing
 // them at all, since the brief only specified pots through level 3.
 const POT_TYPES = {
-  basic:    { name:'Basic Pot',    icon:'🪴', cost:60,  maxStrainLvl:1,  sessions:15, desc:'Grows level 1 strains. Sturdy enough for 15 grow sessions.' },
-  advanced: { name:'Advanced Pot', icon:'🏺', cost:140, maxStrainLvl:2,  sessions:10, desc:'Grows level 1-2 strains. Handles 10 grow sessions before breaking.' },
-  pro:      { name:'Pro Pot',      icon:'⚱️', cost:260, maxStrainLvl:3,  sessions:5,  desc:'Grows level 1-3 strains. Handles 5 grow sessions before breaking.' },
-  master:   { name:'Master Pot',   icon:'👑', cost:420, maxStrainLvl:99, sessions:3,  desc:'Grows any strain, but only lasts 3 grow sessions.' },
+  basic:    { name:'Basic Pot',    icon:'🪴', cost:60,  maxStrainLvl:1,  sessions:15, unlockLvl:1, desc:'Grows level 1 strains. Sturdy enough for 15 grow sessions.' },
+  advanced: { name:'Advanced Pot', icon:'🏺', cost:140, maxStrainLvl:2,  sessions:10, unlockLvl:2, desc:'Grows level 1-2 strains. Handles 10 grow sessions before breaking.' },
+  pro:      { name:'Pro Pot',      icon:'⚱️', cost:260, maxStrainLvl:3,  sessions:5,  unlockLvl:3, desc:'Grows level 1-3 strains. Handles 5 grow sessions before breaking.' },
+  master:   { name:'Master Pot',   icon:'👑', cost:420, maxStrainLvl:99, sessions:3,  unlockLvl:4, desc:'Grows any strain, but only lasts 3 grow sessions.' },
 };
 
 const PRODUCTS = {
-  fmites:   { name:'F-Mites Spray', icon:'🧪', kind:'cure',       cost:45,
+  fmites:   { name:'F-Mites Spray', icon:'🧪', kind:'cure',       cost:45, unlockLvl:1,
               desc:'Kills an active mite infestation so the plant can keep growing or be harvested.' },
-  moldbgon: { name:"Mold B'Gon",    icon:'🦠', kind:'cure',       cost:45,
+  moldbgon: { name:"Mold B'Gon",    icon:'🦠', kind:'cure',       cost:45, unlockLvl:1,
               desc:'Cures an active mold outbreak and saves the harvest.' },
-  killa:    { name:'Killa Spray',   icon:'🐝', kind:'preventive', cost:18,
+  killa:    { name:'Killa Spray',   icon:'🐝', kind:'preventive', cost:18, unlockLvl:1,
               desc:'Used before an outbreak starts, this prevents mites and mold for the rest of that grow. Has no effect once an outbreak has already hit.' },
-  pump1:    { name:'Da Pump',       icon:'💦', kind:'pump', duration:45,  cost:25,
+  pump1:    { name:'Da Pump',       icon:'💦', kind:'pump', duration:45,  cost:25, unlockLvl:1,
               desc:'Single-use — auto-waters a whole table for a while so you can focus elsewhere.' },
-  pump2:    { name:'Da Pump 2.0',   icon:'💦', kind:'pump', duration:80,  cost:50,
+  pump2:    { name:'Da Pump 2.0',   icon:'💦', kind:'pump', duration:80,  cost:50, unlockLvl:3,
               desc:'Auto-waters a table for even longer.' },
-  pump3:    { name:'Da Pump 3+',    icon:'💦', kind:'pump', duration:130, cost:85,
+  pump3:    { name:'Da Pump 3+',    icon:'💦', kind:'pump', duration:130, cost:85, unlockLvl:6,
               desc:'Auto-waters a table for the longest stretch.' },
-  gro1:     { name:'Weed Gro!',     icon:'🌿', kind:'gro', cutPct:0.20, cost:30,
+  gro1:     { name:'Weed Gro!',     icon:'🌿', kind:'gro', cutPct:0.20, cost:30, unlockLvl:1,
               desc:"Basic nutrient boost — instantly cuts a plant's remaining grow time." },
-  gro2:     { name:'Weed Gro! XL',  icon:'🌿', kind:'gro', cutPct:0.35, cost:60,
+  gro2:     { name:'Weed Gro! XL',  icon:'🌿', kind:'gro', cutPct:0.35, cost:60, unlockLvl:3,
               desc:'A bigger instant cut to remaining grow time.' },
-  gro3:     { name:'Weed Gro! XXL', icon:'🌿', kind:'gro', cutPct:0.50, cost:100,
+  gro3:     { name:'Weed Gro! XXL', icon:'🌿', kind:'gro', cutPct:0.50, cost:100, unlockLvl:6,
               desc:'The biggest instant cut to remaining grow time.' },
 };
+
+// How many "cans" of water (button taps) it takes to fill a pot from empty
+// to full, and how long a full tank lasts before draining out. A plant does
+// not grow at all until its pot has been watered, and growth pauses again
+// whenever the tank runs dry — so keeping pots topped up is an active job.
+// Master Pot isn't specified in the brief; assumed to match Pro Pot (2 cans)
+// since it's the top-tier pot.
+const WATER_CANS_NEEDED = { basic:4, advanced:3, pro:2, master:2 };
+const WATER_DRAIN_SECONDS = 45;
+
+// Staff for Hire: one hire per role at a time, for a fixed real-time
+// contract length. Cost and power both scale with unlock level. Security
+// reduces bust chance and can stop robbery attempts outright (successRate).
+// Promoters speed up customer traffic and trickle in reputation. Sales staff
+// auto-serve the front of the customer queue (fillTime = seconds per sale).
+// Growers auto-water/cure/harvest every table.
+const STAFF_ROSTER = {
+  mack:     { name:'Crackhead Mack',   role:'security', cost:200, duration:600, unlockLvl:2,  successRate:0.35, bustReduction:0.05,
+              flavor:"Rough around the edges, but he'll stand by the door." },
+  cole:     { name:'Sergeant Cole',    role:'security', cost:450, duration:600, unlockLvl:6,  successRate:0.65, bustReduction:0.10,
+              flavor:'Afghan war vet turned Afghan Kush enthusiast — discharged, but still sharp against thugs.' },
+  bodyguard:{ name:"Ye's Bodyguard",   role:'security', cost:900, duration:600, unlockLvl:10, successRate:0.92, bustReduction:0.16,
+              flavor:'Professional private security. Handles anything thrown his way.' },
+
+  larry:    { name:'Dumpster Larry',   role:'promoter', cost:150, duration:600, unlockLvl:2,  trafficMult:0.85, repPerSec:0.02,
+              flavor:'Promotes the shop to passers-by between dumpster dives.' },
+  fatone:   { name:'Lance Fatone',     role:'promoter', cost:400, duration:600, unlockLvl:6,  trafficMult:0.60, repPerSec:0.05,
+              flavor:'Promoted FUBAR in West Hollywood — high hit rate bringing customers in.' },
+  ferrari:  { name:'Ashley Ferrari',   role:'promoter', cost:850, duration:600, unlockLvl:10, trafficMult:0.35, repPerSec:0.09,
+              flavor:'No promo experience to speak of. Somehow brings in everybody anyway. Could it be the looks?' },
+
+  jane:     { name:'Hippy Jane',       role:'sales', cost:180, duration:600, unlockLvl:2,  fillTime:26,
+              flavor:'Loves to chat. Takes forever to actually ring anyone up.' },
+  lawrence: { name:'Tichina Lawrence', role:'sales', cost:420, duration:600, unlockLvl:6,  fillTime:14,
+              flavor:'Laid off from Target, hungry to work, solid at closing a sale.' },
+  phuk:     { name:'Gaby Phuk',        role:'sales', cost:820, duration:600, unlockLvl:10, fillTime:7,
+              flavor:'Went legit after a deal gone wrong — moves product fast.' },
+
+  jeff:     { name:'Hippy Jeff',       role:'grower', cost:180, duration:600, unlockLvl:2,  dailyBonus:0,
+              flavor:"Waters and harvests fine, but can't treat an outbreak without supplies on hand." },
+  zhao:     { name:'Ken Zhao',         role:'grower', cost:430, duration:600, unlockLvl:6,  dailyBonus:0,
+              flavor:'Studying the craft in Amsterdam — efficient, precise, reliable.' },
+  maryjane: { name:'Dr. Mary Jane',    role:'grower', cost:900, duration:600, unlockLvl:10, dailyBonus:60,
+              flavor:'THC University grad who reinvests her own money into your grow room.' },
+};
+function staffByRole(role){
+  return Object.keys(STAFF_ROSTER).filter(k=>STAFF_ROSTER[k].role===role)
+    .sort((a,b)=>STAFF_ROSTER[a].cost-STAFF_ROSTER[b].cost);
+}
 
 const XP_PER_LEVEL = lvl => lvl * 140;
 const QUALITY_TIERS = [
@@ -447,7 +732,8 @@ function qualityTier(q){
   return t;
 }
 
-const SAVE_KEY = 'budboss_save_v1';
+const SAVE_KEY = 'budboss_save_v2';
+const OLD_SAVE_KEY = 'budboss_save_v1';
 let state = null;
 let lastTick = Date.now();
 let customerIdSeq = 1;
@@ -462,39 +748,64 @@ function freshState(){
     heat: 0,
     level: 1,
     xp: 0,
-    rep: 0,
-    upgrades: { pots:2, tent:0, light:0, soil:0, jars:0, security:0, runner:0 },
-    products: { fmites: 0 },
+    rep: 0, // 0-100, drives customer traffic
+    shopOpen: false,
+    upgrades: { light:0, soil:0, jars:0 },
+    tableUpgradesBought: 0,
+    products: { fmites:0, moldbgon:0, killa:0, pump1:0, pump2:0, pump3:0, gro1:0, gro2:0, gro3:0 },
+    potsOwned: { basic:1, advanced:0, pro:0, master:0 }, // start with one free Basic Pot
     seeds: { ditch: 3 },
-    // each pot slot is an array of plant-slots: length 1 normally, length 3 once
-    // upgraded into a Grow Tent. Each entry is null or a plant object.
-    pots: [[null], [null]],
-    jars: [], // curing: {strainId, amount, startedAt, cureNeeded}
+    // Grow-room furniture: each table has a tier (index into TABLE_TIERS) and
+    // a row of pot-slots matching that tier's capacity. A slot is null (no
+    // pot placed) or a pot object { potType, sessionsLeft, plant }.
+    tables: [ { tier:0, pots:[null] }, { tier:0, pots:[null] } ],
+    jars: [], // curing: {strainId, amount, elapsed, cureNeeded}
     inventory: {}, // strainId -> { amount, quality }
     customers: [],
     customerTimer: 6,
+    // Staff for Hire: one hire per role at a time. Each is { key, timeLeft } or null.
+    staff: { security:null, promoter:null, sales:null, grower:null },
+    salesTimer: 10,
+    robberyTimer: 90,
+    staffWarned: {}, // one-shot warning flags, reset daily
     stats: { totalEarned:0, sales:0, grown:0, busted:0 },
+    notifications: [], // {msg, type, day} - newest first, capped at 100
+    notifSeenCount: 0,
     lastSaveTime: Date.now(),
   };
 }
 
-// Migrates older saves (pre grow-tents/mites) into the current shape so
-// existing progress isn't lost.
-function migrateState(s){
-  if(!s.upgrades) s.upgrades = {};
-  if(s.upgrades.tent === undefined) s.upgrades.tent = 0;
-  if(!s.products) s.products = { fmites: 0 };
-  if(Array.isArray(s.pots)){
-    s.pots = s.pots.map(entry => Array.isArray(entry) ? entry : [entry===undefined?null:entry]);
-    s.pots.forEach(container=>{
-      container.forEach(p=>{
-        if(p){
-          if(p.mites===undefined) p.mites = false;
-          if(!p.miteRolls) p.miteRolls = { sprout:false, veg:false, flower:false };
-        }
-      });
+// The tables/pots/products system replaced the old flat pot-slot format
+// entirely, so old saves can't map cleanly onto it. This carries forward
+// simple progress (cash, level, seeds, stash, stats) into a fresh grow room
+// rather than losing everything.
+function migrateFromOldSave(old){
+  const fresh = freshState();
+  const migrated = {
+    ...fresh,
+    cash: old.cash ?? fresh.cash,
+    day: old.day ?? fresh.day,
+    dayTimer: old.dayTimer ?? fresh.dayTimer,
+    heat: old.heat ?? fresh.heat,
+    level: old.level ?? fresh.level,
+    xp: old.xp ?? fresh.xp,
+    rep: old.rep ?? fresh.rep,
+    seeds: old.seeds ?? fresh.seeds,
+    jars: old.jars ?? fresh.jars,
+    inventory: old.inventory ?? fresh.inventory,
+    stats: old.stats ?? fresh.stats,
+  };
+  if(old.upgrades){
+    ['light','soil','jars'].forEach(k=>{
+      if(old.upgrades[k] !== undefined) migrated.upgrades[k] = old.upgrades[k];
     });
   }
+  if(old.products){
+    Object.keys(migrated.products).forEach(k=>{
+      if(old.products[k] !== undefined) migrated.products[k] = old.products[k];
+    });
+  }
+  return migrated;
 }
 
 function loadState(){
@@ -502,8 +813,23 @@ function loadState(){
     const raw = localStorage.getItem(SAVE_KEY);
     if(raw){
       const parsed = JSON.parse(raw);
-      migrateState(parsed);
+      if(!parsed.notifications) parsed.notifications = [];
+      if(parsed.notifSeenCount === undefined) parsed.notifSeenCount = parsed.notifications.length;
+      if(parsed.shopOpen === undefined) parsed.shopOpen = false;
+      if(!parsed.staff) parsed.staff = { security:null, promoter:null, sales:null, grower:null };
+      if(parsed.salesTimer === undefined) parsed.salesTimer = 10;
+      if(parsed.robberyTimer === undefined) parsed.robberyTimer = 90;
+      if(!parsed.staffWarned) parsed.staffWarned = {};
+      if(parsed.rep === undefined) parsed.rep = 0;
+      parsed.rep = Math.max(0, Math.min(100, parsed.rep));
       return parsed;
+    }
+    const oldRaw = localStorage.getItem(OLD_SAVE_KEY);
+    if(oldRaw){
+      const old = JSON.parse(oldRaw);
+      const migrated = migrateFromOldSave(old);
+      toast('🪑 Grow room overhauled! Cash, level, and stash carried over — tables and pots reset fresh.', 'good');
+      return migrated;
     }
   }catch(e){ console.warn('load failed', e); }
   return freshState();
@@ -514,17 +840,115 @@ function saveState(){
 }
 function resetGame(){
   localStorage.removeItem(SAVE_KEY);
+  localStorage.removeItem(OLD_SAVE_KEY);
   location.reload();
 }
 
-/* ---------------- TOASTS ---------------- */
-function toast(msg, type=''){
+// Reset requires typing the word ERASE (all caps, exact) before the red
+// confirm button even appears — a deliberate friction check since this
+// permanently wipes every bit of saved progress.
+function openResetModal(){
+  document.getElementById('resetConfirmInput').value = '';
+  document.getElementById('resetConfirmBtn').style.display = 'none';
+  document.getElementById('resetOverlay').style.display = 'flex';
+}
+function closeResetModal(){
+  document.getElementById('resetOverlay').style.display = 'none';
+}
+function checkResetInput(){
+  const val = document.getElementById('resetConfirmInput').value;
+  document.getElementById('resetConfirmBtn').style.display = (val === 'ERASE') ? 'block' : 'none';
+}
+function confirmReset(){
+  const val = document.getElementById('resetConfirmInput').value;
+  if(val !== 'ERASE') return; // guard against any stale/forced click
+  resetGame();
+}
+
+/* ---------------- TOASTS & NOTIFICATIONS ---------------- */
+// groupKey lets bursts of similar events (staff harvesting/selling over and
+// over, repeated robbery attempts, etc.) collapse into one bubble with a
+// growing "x3" counter instead of stacking a wall of near-identical toasts.
+// If no groupKey is given, the exact message text is used, so literal repeats
+// still collapse too. The bubble always shows the newest message's details.
+function toast(msg, type='', groupKey){
+  const key = groupKey || msg;
   const wrap = document.getElementById('toastWrap');
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.textContent = msg;
-  wrap.appendChild(el);
-  setTimeout(()=>el.remove(), 2600);
+  let el = null;
+  for(let i=0;i<wrap.children.length;i++){
+    const c = wrap.children[i];
+    if(c.dataset && c.dataset.toastKey === key){ el = c; break; }
+  }
+  if(el){
+    const count = (parseInt(el.dataset.toastCount,10)||1) + 1;
+    el.dataset.toastCount = count;
+    const msgEl = el.querySelector('.toastMsg');
+    const countEl = el.querySelector('.toastCount');
+    if(msgEl) msgEl.textContent = msg;
+    if(countEl) countEl.textContent = ' x' + count;
+    clearTimeout(el._toastTimer);
+    el._toastTimer = setTimeout(()=>el.remove(), 2600);
+    el.classList.remove('toastBump');
+    void el.offsetWidth; // reflow, so the bump animation can replay
+    el.classList.add('toastBump');
+  } else {
+    el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.dataset.toastKey = key;
+    el.dataset.toastCount = '1';
+    el.innerHTML = `<span class="toastMsg"></span><span class="toastCount"> x1</span>`;
+    el.querySelector('.toastMsg').textContent = msg;
+    wrap.appendChild(el);
+    el._toastTimer = setTimeout(()=>el.remove(), 2600);
+  }
+  pushNotification(msg, type, groupKey);
+}
+// Logs an event to the notification history without popping a toast bubble
+// (used for level-ups, which get their own celebratory modal instead).
+function logOnly(msg, type, groupKey){
+  pushNotification(msg, type, groupKey);
+}
+// Same consolidation idea for the persistent notification history: if the
+// most recent entry shares a key with this one, bump its counter and refresh
+// its text/day instead of adding a duplicate line.
+function pushNotification(msg, type, groupKey){
+  if(!state.notifications) state.notifications = [];
+  const key = groupKey || msg;
+  const top = state.notifications[0];
+  if(top && top.key === key){
+    top.msg = msg;
+    top.count = (top.count||1) + 1;
+    top.day = state.day;
+  } else {
+    state.notifications.unshift({ msg, type, day: state.day, key, count:1 });
+  }
+  if(state.notifications.length > 100) state.notifications.length = 100;
+  updateNotifDot();
+}
+function updateNotifDot(){
+  const el = document.getElementById('notifDot');
+  if(!el) return;
+  const unseen = state.notifications.length - (state.notifSeenCount||0);
+  el.classList.toggle('show', unseen > 0);
+}
+function openNotifications(){
+  renderNotifications();
+  state.notifSeenCount = state.notifications.length;
+  updateNotifDot();
+  document.getElementById('notifOverlay').style.display = 'flex';
+}
+function closeNotifications(){
+  document.getElementById('notifOverlay').style.display = 'none';
+}
+function renderNotifications(){
+  const el = document.getElementById('notifList');
+  if(!state.notifications || state.notifications.length===0){
+    el.innerHTML = `<div class="empty"><span class="emoji">🔔</span>No notifications yet.</div>`;
+    return;
+  }
+  el.innerHTML = state.notifications.map(n=>
+    `<div class="notifRow ${n.type}"><span class="notifDay">Day ${n.day}</span><span class="notifMsg">${n.msg}${n.count>1?` <b class="notifCount">x${n.count}</b>`:''}</span></div>`
+  ).join('');
 }
 
 /* ---------------- UNLOCKS ---------------- */
@@ -552,60 +976,223 @@ function cureTimeFor(){
   const jarLvl = state.upgrades.jars;
   return Math.max(20, 45 - jarLvl*6);
 }
+function jarCapacity(){ return 2 + state.upgrades.jars; }
+function tableCountCost(){
+  return Math.round(80 * Math.pow(1.6, state.tables.length - 2));
+}
+function tableUpgradeCost(){
+  return Math.round(300 * Math.pow(1.7, state.tableUpgradesBought));
+}
+// Finds the table with the fewest upgrades so far (upgrades always go to
+// the least-upgraded table first). Returns -1 if every table is maxed.
+function nextTableToUpgrade(){
+  let idx = -1, minTier = TABLE_TIERS.length;
+  state.tables.forEach((t,i)=>{
+    if(t.tier < TABLE_TIERS.length-1 && t.tier < minTier){ minTier = t.tier; idx = i; }
+  });
+  return idx;
+}
 function bustChance(){
   const base = 0.04 + (state.heat/100)*0.34;
-  const reduction = state.upgrades.security*0.06;
+  let reduction = 0;
+  if(state.staff.security) reduction += STAFF_ROSTER[state.staff.security.key].bustReduction;
   return Math.max(0.01, base - reduction);
 }
+// Reputation drives how eager customers are to show up: low rep means slow,
+// dead traffic; high rep speeds things up. Also caps how many customers can
+// be in the shop at once — a bad reputation keeps the place looking empty.
+function repTrafficMultiplier(){
+  return Math.max(0.5, 1.6 - (state.rep/100));
+}
+function maxConcurrentCustomers(){
+  if(state.rep >= 60) return 5;
+  if(state.rep >= 30) return 4;
+  if(state.rep >= 10) return 3;
+  return 2;
+}
+function addRep(amount){
+  state.rep = Math.max(0, Math.min(100, state.rep + amount));
+}
 function addXp(amount){
+  const startLevel = state.level;
   state.xp += amount;
-  const needed = XP_PER_LEVEL(state.level);
-  while(state.xp >= needed){
+  while(state.xp >= XP_PER_LEVEL(state.level)){
     state.xp -= XP_PER_LEVEL(state.level);
     state.level++;
-    toast(`🎉 Level up! Now level ${state.level}`, 'good');
-    const newlyUnlocked = STRAINS.find(s=>s.unlockLvl===state.level);
-    if(newlyUnlocked) toast(`🔓 New strain unlocked: ${newlyUnlocked.name}`, 'good');
+  }
+  if(state.level > startLevel){
+    const unlocks = collectUnlocksBetween(startLevel, state.level);
+    logOnly(`🎉 Level up! Now level ${state.level}`, 'good', 'levelup');
+    unlocks.forEach(u => logOnly(`🔓 Unlocked: ${u.label}`, 'good', 'strain_unlock'));
+    showLevelUpModal(state.level, unlocks);
   }
 }
 
-/* ---------------- GROW ROOM ---------------- */
-function potCapacity(i){ return i < state.upgrades.tent ? 3 : 1; }
+// Gathers everything that just became available between the old and new
+// level — strains, pot types, products, staff hires, and table tiers —
+// so a level-up can show the player the full picture of what they earned,
+// not just a new strain.
+function collectUnlocksBetween(fromLevel, toLevel){
+  const items = [];
+  STRAINS.forEach(s=>{
+    if(s.unlockLvl > fromLevel && s.unlockLvl <= toLevel) items.push({ cat:'Strain', label:`${s.emoji} ${s.name}` });
+  });
+  Object.keys(POT_TYPES).forEach(k=>{
+    const p = POT_TYPES[k];
+    if(p.unlockLvl > fromLevel && p.unlockLvl <= toLevel) items.push({ cat:'Pot', label:`${p.icon} ${p.name}` });
+  });
+  Object.keys(PRODUCTS).forEach(k=>{
+    const p = PRODUCTS[k];
+    if(p.unlockLvl > fromLevel && p.unlockLvl <= toLevel) items.push({ cat:'Product', label:`${p.icon} ${p.name}` });
+  });
+  Object.keys(STAFF_ROSTER).forEach(k=>{
+    const s = STAFF_ROSTER[k];
+    if(s.unlockLvl > fromLevel && s.unlockLvl <= toLevel) items.push({ cat:'Staff', label:`${s.name} (hire)` });
+  });
+  TABLE_TIERS.forEach(t=>{
+    if(t.unlockLvl > fromLevel && t.unlockLvl <= toLevel) items.push({ cat:'Table', label:`${t.name} (${t.capacity} pots)` });
+  });
+  return items;
+}
 
-function plantSeed(potIndex, slotIndex, strainId){
-  if(state.seeds[strainId] <= 0) return;
-  const container = state.pots[potIndex];
-  if(!container || container[slotIndex]) return;
+let levelUpCloseTimer = null;
+function showLevelUpModal(newLevel, unlocks){
+  document.getElementById('levelUpNum').textContent = newLevel;
+  const unlockEl = document.getElementById('levelUpUnlocks');
+  unlockEl.innerHTML = unlocks.length
+    ? `🔓 Unlocked:<br>${unlocks.map(u=>`<b>${u.label}</b> <span class="levelUpCat">${u.cat}</span>`).join('<br>')}`
+    : '';
+  const closeBtn = document.getElementById('levelUpCloseBtn');
+  closeBtn.classList.remove('visible');
+  clearTimeout(levelUpCloseTimer);
+  levelUpCloseTimer = setTimeout(()=>{ closeBtn.classList.add('visible'); }, 2500);
+  document.getElementById('levelUpOverlay').style.display = 'flex';
+}
+function closeLevelUpModal(){
+  document.getElementById('levelUpOverlay').style.display = 'none';
+}
+
+/* ---------------- GROW ROOM ---------------- */
+function strainAllowedInPot(strain, potType){
+  return strain.unlockLvl <= POT_TYPES[potType].maxStrainLvl;
+}
+function potPlant(tableIndex, slotIndex){
+  const table = state.tables[tableIndex];
+  const pot = table && table.pots[slotIndex];
+  return pot ? pot.plant : null;
+}
+function bestOwnedGro(){
+  return ['gro3','gro2','gro1'].find(k => (state.products[k]||0) > 0) || null;
+}
+function bestOwnedPump(){
+  return ['pump3','pump2','pump1'].find(k => (state.products[k]||0) > 0) || null;
+}
+
+function buyPot(potType){
+  const pt = POT_TYPES[potType];
+  if(pt.unlockLvl && state.level < pt.unlockLvl){ toast(`Unlocks at level ${pt.unlockLvl}`, 'bad'); return; }
+  if(state.cash < pt.cost){ toast('Not enough cash', 'bad'); return; }
+  state.cash -= pt.cost;
+  state.potsOwned[potType] = (state.potsOwned[potType]||0) + 1;
+  toast(`Bought 1 ${pt.name}`, 'good');
+  render();
+}
+function placePot(tableIndex, slotIndex, potType){
+  if((state.potsOwned[potType]||0) <= 0) return;
+  const table = state.tables[tableIndex];
+  if(!table || table.pots[slotIndex]) return;
+  state.potsOwned[potType]--;
+  table.pots[slotIndex] = { potType, sessionsLeft: POT_TYPES[potType].sessions, plant:null };
+  render();
+}
+function trashPot(tableIndex, slotIndex){
+  const table = state.tables[tableIndex];
+  const pot = table && table.pots[slotIndex];
+  if(!pot || pot.plant) return; // can only trash between grows, not mid-grow
+  const potName = POT_TYPES[pot.potType].name;
+  table.pots[slotIndex] = null;
+  toast(`🗑️ ${potName} trashed, along with its remaining sessions.`, 'bad');
+  render();
+}
+function plantSeed(tableIndex, slotIndex, strainId){
+  const table = state.tables[tableIndex];
+  const pot = table && table.pots[slotIndex];
+  if(!pot || pot.plant) return;
+  const strain = strainById(strainId);
+  if(!strainAllowedInPot(strain, pot.potType)){ toast(`${POT_TYPES[pot.potType].name} can't grow this strain`, 'bad'); return; }
+  if((state.seeds[strainId]||0) <= 0) return;
   state.seeds[strainId]--;
-  container[slotIndex] = {
+  pot.plant = {
     strainId, elapsed:0, health:100, harvestReady:false,
-    mites:false, miteRolls:{ sprout:false, veg:false, flower:false },
+    waterLevel:0, // pot starts dry — must be watered before it will grow at all
+    mites:false, mold:false, protected:false,
+    miteRolls:{ sprout:false, veg:false, flower:false },
+    moldTimer:0, moldActiveTimer:0, pumpTimeLeft:0,
+    tendedTime:0, neglectTime:0, // tracks how well-attended the plant has been
   };
   render();
 }
-function waterPot(potIndex, slotIndex){
-  const p = state.pots[potIndex] && state.pots[potIndex][slotIndex];
-  if(!p || p.harvestReady || p.mites) return;
-  p.health = Math.min(100, p.health + 25);
+function waterPot(tableIndex, slotIndex){
+  const table = state.tables[tableIndex];
+  const pot = table && table.pots[slotIndex];
+  const p = pot && pot.plant;
+  if(!p || p.harvestReady || p.mites || p.mold) return;
+  if(p.pumpTimeLeft>0) return; // already auto-watered by Da Pump
+  if(p.waterLevel >= 100) return;
+  const cansNeeded = WATER_CANS_NEEDED[pot.potType] || 4;
+  p.waterLevel = Math.min(100, p.waterLevel + 100/cansNeeded);
   render();
 }
-function harvestPot(potIndex, slotIndex){
-  const p = state.pots[potIndex] && state.pots[potIndex][slotIndex];
-  if(!p || !p.harvestReady) return;
+function harvestPot(tableIndex, slotIndex){
+  const table = state.tables[tableIndex];
+  const pot = table && table.pots[slotIndex];
+  const p = pot && pot.plant;
+  if(!p || !p.harvestReady || p.mold) return;
+  if(state.jars.length >= jarCapacity()){
+    toast('No free Weed Jars! Collect or upgrade jars in the Market.', 'bad');
+    return;
+  }
   const strain = strainById(p.strainId);
   const amt = Math.round(yieldFor(strain) * (p.health/100));
   state.jars.push({ strainId:p.strainId, amount:amt, elapsed:0, cureNeeded:cureTimeFor() });
   state.stats.grown += amt;
-  toast(`🌾 Harvested ${amt}g of ${strain.name}`, 'good');
-  state.pots[potIndex][slotIndex] = null;
+  toast(`🌾 Harvested ${amt}g of ${strain.name}`, 'good', 'harvest');
+  consumePotSession(table, pot, tableIndex, slotIndex, null);
   render();
 }
-function sprayMites(potIndex, slotIndex){
-  const p = state.pots[potIndex] && state.pots[potIndex][slotIndex];
+// Uses up one grow session on a pot (from a harvest, a dead plant, or a
+// ruined batch), breaking the pot if it's out of sessions.
+function consumePotSession(table, pot, tableIndex, slotIndex, failMsg){
+  pot.plant = null;
+  pot.sessionsLeft--;
+  if(pot.sessionsLeft <= 0){
+    const potName = POT_TYPES[pot.potType].name;
+    table.pots[slotIndex] = null;
+    toast(`💥 Your ${potName} broke down after its last grow session.`, 'bad');
+  } else if(failMsg){
+    toast(failMsg, 'bad');
+  }
+}
+function sprayMites(tableIndex, slotIndex){
+  const p = potPlant(tableIndex, slotIndex);
   if(!p || !p.mites) return;
   if(state.products.fmites <= 0){ toast('Buy F-Mites from the Market first', 'bad'); return; }
   state.products.fmites--;
   p.mites = false;
+  finishSpray(p);
+}
+function sprayMoldBGon(tableIndex, slotIndex){
+  const p = potPlant(tableIndex, slotIndex);
+  if(!p || !p.mold) return;
+  if(state.products.moldbgon <= 0){ toast("Buy Mold B'Gon from the Market first", 'bad'); return; }
+  state.products.moldbgon--;
+  p.mold = false;
+  p.moldActiveTimer = 0;
+  const strain = strainById(p.strainId);
+  toast(`🦠 Mold cleared! Your ${strain.name} harvest is saved.`, 'good');
+  render();
+}
+function finishSpray(p){
   const strain = strainById(p.strainId);
   const gt = growTimeFor(strain);
   if(p.elapsed >= gt){
@@ -617,6 +1204,57 @@ function sprayMites(potIndex, slotIndex){
   }
   render();
 }
+function useKilla(tableIndex, slotIndex){
+  const p = potPlant(tableIndex, slotIndex);
+  if(!p) return;
+  if(p.mites || p.mold){ toast('Killa Spray has no effect on an active outbreak', 'bad'); return; }
+  if(p.protected){ toast('Already protected'); return; }
+  if(state.products.killa <= 0){ toast('Buy Killa Spray from the Market first', 'bad'); return; }
+  state.products.killa--;
+  p.protected = true;
+  toast('🐝 Killa Spray applied — protected for the rest of this grow', 'good');
+  render();
+}
+function useGro(tableIndex, slotIndex, key){
+  const p = potPlant(tableIndex, slotIndex);
+  if(!p || p.harvestReady || p.mites || p.mold) return;
+  if((state.products[key]||0) <= 0) return;
+  const prod = PRODUCTS[key];
+  state.products[key]--;
+  const strain = strainById(p.strainId);
+  const gt = growTimeFor(strain);
+  p.elapsed = Math.min(gt, p.elapsed + (gt - p.elapsed) * prod.cutPct);
+  if(p.elapsed >= gt && !p.mites && !p.mold){
+    p.elapsed = gt;
+    p.harvestReady = true;
+  }
+  toast(`🌿 ${prod.name} used — growth sped up!`, 'good');
+  render();
+}
+function useGroAuto(tableIndex, slotIndex){
+  const key = bestOwnedGro();
+  if(!key){ toast('Buy Weed Gro! from the Market first', 'bad'); return; }
+  useGro(tableIndex, slotIndex, key);
+}
+function usePump(tableIndex, key){
+  const table = state.tables[tableIndex];
+  if(!table) return;
+  if((state.products[key]||0) <= 0) return;
+  const prod = PRODUCTS[key];
+  state.products[key]--;
+  table.pots.forEach(pot=>{
+    if(pot && pot.plant && !pot.plant.harvestReady){
+      pot.plant.pumpTimeLeft = Math.max(pot.plant.pumpTimeLeft, prod.duration);
+    }
+  });
+  toast(`💦 ${prod.name} used on Table ${tableIndex+1}`, 'good');
+  render();
+}
+function usePumpAuto(tableIndex){
+  const key = bestOwnedPump();
+  if(!key){ toast('Buy Da Pump from the Market first', 'bad'); return; }
+  usePump(tableIndex, key);
+}
 function buySeed(strainId){
   const cost = Math.round(strainById(strainId).price * 1.4);
   if(state.cash < cost){ toast('Not enough cash', 'bad'); return; }
@@ -627,6 +1265,7 @@ function buySeed(strainId){
 }
 function buyProduct(key){
   const prod = PRODUCTS[key];
+  if(prod.unlockLvl && state.level < prod.unlockLvl){ toast(`Unlocks at level ${prod.unlockLvl}`, 'bad'); return; }
   if(state.cash < prod.cost){ toast('Not enough cash', 'bad'); return; }
   state.cash -= prod.cost;
   state.products[key] = (state.products[key]||0) + 1;
@@ -638,23 +1277,40 @@ function buyProduct(key){
 // Never rolls during the seedling stage. Chance band widens the further
 // along the plant is: sprouting is a small risk, vegetating a bit more,
 // and flowering carries the highest risk (up to 35%). Each stage only
-// rolls once per plant, and it's still entirely possible to grow a batch
-// mite-free — this is meant to be an occasional scare, not a certainty.
+// rolls once per plant, and Killa Spray blocks this entirely.
+// How attentively a plant has been cared for scales its mite risk on top of
+// the usual stage-based baseline: a plant you've been actively watering (or
+// covering with an active Da Pump) is meaningfully safer than one you've let
+// sit dry, in addition to Killa Spray's outright immunity.
+function careMultiplier(p){
+  const tendedTime = p.tendedTime || 0;
+  const neglectTime = p.neglectTime || 0;
+  const tracked = tendedTime + neglectTime;
+  // No data yet (very early in the grow) — assume a mild neutral risk.
+  const neglectRatio = tracked > 2 ? neglectTime / tracked : 0.3;
+  let mult = 0.4 + neglectRatio * 1.6; // ~0.4x when fully tended, ~2.0x when fully neglected
+  if(p.pumpTimeLeft > 0) mult *= 0.85; // an active Pump counts as active care too
+  return Math.max(0.3, Math.min(2.2, mult));
+}
 function maybeRollMites(p, pct){
-  if(p.mites) return;
+  if(p.mites || p.mold || p.protected) return;
   if(pct < 0.2) return; // seedling — safe
+  const mult = careMultiplier(p);
   if(pct < 0.5){
     if(p.miteRolls.sprout) return;
     p.miteRolls.sprout = true;
-    if(Math.random()*100 < (1 + Math.random()*5)) infestPlant(p);
+    const chance = Math.min(45, (1 + Math.random()*5) * mult);
+    if(Math.random()*100 < chance) infestPlant(p);
   } else if(pct < 0.85){
     if(p.miteRolls.veg) return;
     p.miteRolls.veg = true;
-    if(Math.random()*100 < (4 + Math.random()*10)) infestPlant(p);
+    const chance = Math.min(45, (4 + Math.random()*10) * mult);
+    if(Math.random()*100 < chance) infestPlant(p);
   } else {
     if(p.miteRolls.flower) return;
     p.miteRolls.flower = true;
-    if(Math.random()*100 < (10 + Math.random()*25)) infestPlant(p);
+    const chance = Math.min(45, (10 + Math.random()*25) * mult);
+    if(Math.random()*100 < chance) infestPlant(p);
   }
 }
 function infestPlant(p){
@@ -664,9 +1320,11 @@ function infestPlant(p){
 }
 
 /* ---------------- CURING ---------------- */
-function collectJar(jarIndex){
+// Core collect logic shared by the single-jar and collect-all paths.
+// Returns the collected jar (with its amount/strain) or false if not ready.
+function collectJarInternal(jarIndex){
   const jar = state.jars[jarIndex];
-  if(!jar || jar.elapsed < jar.cureNeeded) return;
+  if(!jar || jar.elapsed < jar.cureNeeded) return false;
   const quality = Math.min(100, Math.round((jar.elapsed/jar.cureNeeded)*60 + state.upgrades.jars*8));
   if(!state.inventory[jar.strainId]) state.inventory[jar.strainId] = { amount:0, quality:0 };
   const inv = state.inventory[jar.strainId];
@@ -675,7 +1333,24 @@ function collectJar(jarIndex){
   inv.quality = totalAmt>0 ? Math.round((inv.quality*inv.amount + quality*jar.amount)/totalAmt) : quality;
   inv.amount = totalAmt;
   state.jars.splice(jarIndex,1);
+  return jar;
+}
+function collectJar(jarIndex){
+  const jar = collectJarInternal(jarIndex);
+  if(!jar) return;
   toast(`📦 Cured ${jar.amount}g of ${strainById(jar.strainId).name}`, 'good');
+  render();
+}
+function collectAllJars(){
+  let count = 0, totalAmt = 0;
+  for(let i=state.jars.length-1; i>=0; i--){
+    if(state.jars[i].elapsed >= state.jars[i].cureNeeded){
+      const jar = collectJarInternal(i);
+      if(jar){ count++; totalAmt += jar.amount; }
+    }
+  }
+  if(count===0) return;
+  toast(`📦 Collected ${count} cured jars (${totalAmt}g total)`, 'good');
   render();
 }
 
@@ -709,13 +1384,13 @@ function spawnCustomer(){
   };
   state.customers.push(c);
 }
-function serveCustomer(custId){
+function serveCustomer(custId, servedBy){
   const idx = state.customers.findIndex(c=>c.id===custId);
   if(idx<0) return;
   const c = state.customers[idx];
   const inv = state.inventory[c.strainId];
   if(!inv || inv.amount < c.qty){
-    toast("You don't have enough in stock", 'bad');
+    if(!servedBy) toast("You don't have enough in stock", 'bad');
     return;
   }
   if(c.isCop){
@@ -726,7 +1401,9 @@ function serveCustomer(custId){
     state.heat = Math.min(100, state.heat + 25);
     state.stats.busted++;
     state.customers.splice(idx,1);
-    triggerBust(`An undercover cop caught the sale. You paid a $${fine} fine and lost the stock.`);
+    triggerBust(servedBy
+      ? `${servedBy} served an undercover cop. You paid a $${fine} fine and lost the stock.`
+      : `An undercover cop caught the sale. You paid a $${fine} fine and lost the stock.`);
     render();
     return;
   }
@@ -737,10 +1414,10 @@ function serveCustomer(custId){
   state.cash += finalPrice;
   state.stats.totalEarned += finalPrice;
   state.stats.sales++;
-  state.rep += 1;
+  addRep(1);
   state.heat = Math.min(100, state.heat + 3);
   addXp(c.qty);
-  toast(`💰 Sold ${c.qty}g to ${c.name} for $${finalPrice}`, 'good');
+  toast(`💰 ${servedBy? servedBy+' sold':'Sold'} ${c.qty}g to ${c.name} for $${finalPrice}`, 'good', 'sale');
   state.customers.splice(idx,1);
   render();
 }
@@ -748,7 +1425,7 @@ function declineCustomer(custId){
   const idx = state.customers.findIndex(c=>c.id===custId);
   if(idx<0) return;
   state.customers.splice(idx,1);
-  state.rep = Math.max(0, state.rep-1);
+  addRep(-1);
   render();
 }
 function triggerBust(text){
@@ -763,22 +1440,328 @@ function closeBust(){
 function buyUpgrade(key){
   const u = UPGRADES[key];
   if(u.unlockLvl && state.level < u.unlockLvl){ toast(`Unlocks at level ${u.unlockLvl}`, 'bad'); return; }
-  if(key==='tent' && state.upgrades.tent >= state.upgrades.pots){ toast('Buy more Grow Pots first', 'bad'); return; }
   if(state.upgrades[key] >= u.max){ toast('Already maxed out'); return; }
+  const levelCap = Math.min(u.max, maxUpgradeLevelForPlayer());
+  if(state.upgrades[key] >= levelCap){ toast(`Reach level ${state.upgrades[key]+1} to upgrade this further`, 'bad'); return; }
   const cost = upgradeCost(key);
   if(state.cash < cost){ toast('Not enough cash', 'bad'); return; }
   state.cash -= cost;
   state.upgrades[key]++;
-  if(key==='pots') state.pots.push([null]);
-  if(key==='tent'){
-    const idx = state.upgrades.tent - 1; // pot just converted, in purchase order
-    const container = state.pots[idx];
-    while(container.length < 3) container.push(null);
-    toast(`⛺ Pot ${idx+1} upgraded to a Grow Tent!`, 'good');
+  toast(`Upgraded ${u.name}!`, 'good');
+  render();
+}
+
+function buyTable(){
+  const cost = tableCountCost();
+  if(state.cash < cost){ toast('Not enough cash', 'bad'); return; }
+  state.cash -= cost;
+  state.tables.push({ tier:0, pots:[null] });
+  toast('New table added!', 'good');
+  render();
+}
+function buyTableTier(){
+  const idx = nextTableToUpgrade();
+  if(idx === -1){ toast('All tables are fully upgraded!'); return; }
+  const nextTier = TABLE_TIERS[state.tables[idx].tier + 1];
+  if(state.level < nextTier.unlockLvl){ toast(`Unlocks at level ${nextTier.unlockLvl}`, 'bad'); return; }
+  const cost = tableUpgradeCost();
+  if(state.cash < cost){ toast('Not enough cash', 'bad'); return; }
+  state.cash -= cost;
+  state.tables[idx].tier++;
+  while(state.tables[idx].pots.length < nextTier.capacity) state.tables[idx].pots.push(null);
+  state.tableUpgradesBought++;
+  toast(`${nextTier.name} unlocked on Table ${idx+1}!`, 'good');
+  render();
+}
+
+/* ---------------- SHOP OPEN/CLOSE ---------------- */
+function toggleShop(){
+  state.shopOpen = !state.shopOpen;
+  if(!state.shopOpen){
+    state.customers = []; // closing sends everyone home, no reputation penalty
+    toast('🔒 Shop closed. No customers will come in until you reopen.');
   } else {
-    toast(`Upgraded ${u.name}!`, 'good');
+    toast('🔓 Shop is open for business!', 'good');
   }
   render();
+}
+
+/* ---------------- STAFF FOR HIRE ---------------- */
+function hireStaff(key){
+  const def = STAFF_ROSTER[key];
+  if(state.level < def.unlockLvl){ toast(`Unlocks at level ${def.unlockLvl}`, 'bad'); return; }
+  if(state.staff[def.role]){ toast('Someone is already working that role — let them go first.', 'bad'); return; }
+  if(state.cash < def.cost){ toast('Not enough cash', 'bad'); return; }
+  state.cash -= def.cost;
+  state.staff[def.role] = { key, timeLeft: def.duration };
+  toast(`🤝 Hired ${def.name}!`, 'good');
+  render();
+}
+function fireStaff(role){
+  const cur = state.staff[role];
+  if(!cur) return;
+  const def = STAFF_ROSTER[cur.key];
+  state.staff[role] = null;
+  toast(`👋 Let go of ${def.name}.`);
+  render();
+}
+
+function tickStaff(dt){
+  ['security','promoter','sales','grower'].forEach(role=>{
+    const s = state.staff[role];
+    if(!s) return;
+    s.timeLeft -= dt;
+    if(s.timeLeft <= 0){
+      const def = STAFF_ROSTER[s.key];
+      state.staff[role] = null;
+      toast(`⌛ ${def.name}'s contract ended — they've moved on.`, 'bad');
+    }
+  });
+  if(state.staff.promoter){
+    addRep(STAFF_ROSTER[state.staff.promoter.key].repPerSec * dt);
+  }
+  if(state.staff.sales) runSalesAutomation(dt);
+  if(state.staff.grower) runGrowerAutomation(dt);
+}
+
+// Auto-serves the front of the customer queue. Slower/cheaper staff take
+// longer per sale; if the customer wants something out of stock, the staff
+// member can't do anything about it and warns the player via modal instead
+// of silently failing.
+function runSalesAutomation(dt){
+  const staffState = state.staff.sales;
+  if(!staffState) return;
+  const def = STAFF_ROSTER[staffState.key];
+  state.salesTimer -= dt;
+  if(state.salesTimer > 0) return;
+  state.salesTimer = def.fillTime;
+  if(!state.shopOpen || state.customers.length===0) return;
+  const c = state.customers[0];
+  const inv = state.inventory[c.strainId];
+  if(!inv || inv.amount < c.qty){
+    staffWarnOnce('sales_stock', `${def.name}: A customer wants ${strainById(c.strainId).name} and we're out of stock — I don't know what to tell them!`);
+    return;
+  }
+  serveCustomer(c.id, def.name);
+}
+
+// Waters, cures, and harvests every planted pot automatically. Curing still
+// requires the actual product in stock — if there's none, the staff member
+// can only watch the outbreak happen and warns the player instead.
+function runGrowerAutomation(dt){
+  const staffState = state.staff.grower;
+  if(!staffState) return;
+  const def = STAFF_ROSTER[staffState.key];
+
+  // Watering stays reliable across every table regardless of where they're
+  // currently standing — losing plants to neglect just because the grower
+  // is elsewhere would feel bad, and this is the one job simple enough to
+  // treat as "handled" continuously.
+  for(let ti=0; ti<state.tables.length; ti++){
+    state.tables[ti].pots.forEach(pot=>{
+      if(pot && pot.plant && !pot.plant.harvestReady) pot.plant.waterLevel = 100;
+    });
+  }
+
+  // Everything else (curing, harvesting, and Dr. Mary Jane's planting) only
+  // happens at whichever table they're currently visiting. They move on
+  // their own every few seconds, gravitating toward whatever table needs
+  // the most attention.
+  staffState.moveTimer = (staffState.moveTimer||0) - dt;
+  if(staffState.moveTimer <= 0){
+    staffState.atTable = pickNextGrowerStop(staffState.key);
+    staffState.moveTimer = 4 + Math.random()*3;
+  }
+
+  const ti = staffState.atTable;
+  if(ti===null || ti===undefined || !state.tables[ti]) return;
+  const table = state.tables[ti];
+
+  for(let si=0; si<table.pots.length; si++){
+    const pot = table.pots[si];
+    if(!pot || !pot.plant) continue;
+    const p = pot.plant;
+    if(p.mites){
+      if(state.products.fmites > 0){
+        state.products.fmites--;
+        p.mites = false;
+        finishSprayQuiet(p);
+        logOnly(`🧪 ${def.name} treated mites at Table ${ti+1}.`, 'good', 'staff_cure');
+      } else if(staffState.key === 'maryjane'){
+        p.mites = false;
+        finishSprayQuiet(p);
+        toast(`🛍️ ${def.name} bought F-Mites out of her own pocket to treat Table ${ti+1}.`, 'good', 'staff_purchase');
+      } else {
+        staffWarnOnce('grower_fmites', `${def.name}: We've got mites at Table ${ti+1} and no F-Mites on hand — I can't treat it!`);
+      }
+    }
+    if(p.mold){
+      if(state.products.moldbgon > 0){
+        state.products.moldbgon--;
+        p.mold = false;
+        p.moldActiveTimer = 0;
+        logOnly(`🦠 ${def.name} treated mold at Table ${ti+1}.`, 'good', 'staff_cure');
+      } else if(staffState.key === 'maryjane'){
+        p.mold = false;
+        p.moldActiveTimer = 0;
+        toast(`🛍️ ${def.name} bought Mold B'Gon out of her own pocket to treat Table ${ti+1}.`, 'good', 'staff_purchase');
+      } else {
+        staffWarnOnce('grower_moldbgon', `${def.name}: There's mold at Table ${ti+1} and no Mold B'Gon in stock — this batch might rot!`);
+      }
+    }
+    if(p.harvestReady && !p.mold){
+      if(state.jars.length < jarCapacity()){
+        const strain = strainById(p.strainId);
+        const amt = Math.round(yieldFor(strain) * (p.health/100));
+        state.jars.push({ strainId:p.strainId, amount:amt, elapsed:0, cureNeeded:cureTimeFor() });
+        state.stats.grown += amt;
+        toast(`🌾 ${def.name} harvested ${amt}g of ${strain.name} at Table ${ti+1}`, 'good', 'harvest');
+        consumePotSession(table, pot, ti, si, null);
+      } else {
+        staffWarnOnce('grower_jars', `${def.name}: The Weed Jars are full — I can't harvest at Table ${ti+1}!`);
+      }
+    }
+  }
+
+  // Dr. Mary Jane's signature perk: she'll plant whatever strain customers
+  // are demanding most, but only from seeds the player already bought — and
+  // she'll buy a pot herself, out of her own funds, if the slot is bare.
+  if(staffState.key === 'maryjane'){
+    maryJaneAutoPlant(ti);
+  }
+}
+
+// Picks which table the grower heads to next: prefers one with mites, mold,
+// or a ready harvest waiting. Dr. Mary Jane will also head toward a table
+// with an open slot if she's got seeds ready to plant. Otherwise falls back
+// to any table with a plant at all (just to be nearby/watering).
+function pickNextGrowerStop(staffKey){
+  const urgent = [];
+  const anyPlant = [];
+  const plantable = [];
+  state.tables.forEach((table,ti)=>{
+    table.pots.forEach(pot=>{
+      if(pot && pot.plant){
+        anyPlant.push(ti);
+        if(pot.plant.mites || pot.plant.mold || pot.plant.harvestReady) urgent.push(ti);
+      }
+      if(!pot || !pot.plant) plantable.push(ti);
+    });
+  });
+  if(urgent.length) return urgent[Math.floor(Math.random()*urgent.length)];
+  if(staffKey==='maryjane' && plantable.length && Object.keys(state.seeds).some(sid=>(state.seeds[sid]||0)>0)){
+    return plantable[Math.floor(Math.random()*plantable.length)];
+  }
+  if(anyPlant.length) return anyPlant[Math.floor(Math.random()*anyPlant.length)];
+  return null;
+}
+
+// Cheapest pot type that can legally grow the given strain.
+function choosePotTypeFor(strainId){
+  const strain = strainById(strainId);
+  const candidates = Object.keys(POT_TYPES).filter(k=>strainAllowedInPot(strain, k));
+  if(!candidates.length) return null;
+  return candidates.sort((a,b)=>POT_TYPES[a].cost-POT_TYPES[b].cost)[0];
+}
+
+function maryJaneAutoPlant(ti){
+  const table = state.tables[ti];
+  const demandCounts = {};
+  state.customers.forEach(c=>{ demandCounts[c.strainId] = (demandCounts[c.strainId]||0) + c.qty; });
+  const demandOrder = Object.keys(demandCounts).sort((a,b)=>demandCounts[b]-demandCounts[a]);
+  const strainOrder = demandOrder.length ? demandOrder : unlockedStrains().map(s=>s.id);
+
+  for(const strainId of strainOrder){
+    if((state.seeds[strainId]||0) <= 0) continue; // she won't buy seeds, only plants what's owned
+    const strain = strainById(strainId);
+    for(let si=0; si<table.pots.length; si++){
+      let pot = table.pots[si];
+      if(!pot){
+        const potType = choosePotTypeFor(strainId);
+        if(!potType) continue;
+        pot = { potType, sessionsLeft: POT_TYPES[potType].sessions, plant:null };
+        table.pots[si] = pot;
+        toast(`🛍️ Dr. Mary Jane bought a ${POT_TYPES[potType].name} out of her own pocket for Table ${ti+1}.`, 'good', 'staff_purchase');
+      }
+      if(!pot.plant && strainAllowedInPot(strain, pot.potType)){
+        state.seeds[strainId]--;
+        pot.plant = {
+          strainId, elapsed:0, health:100, harvestReady:false, waterLevel:100,
+          mites:false, mold:false, protected:false,
+          miteRolls:{ sprout:false, veg:false, flower:false },
+          moldTimer:0, moldActiveTimer:0, pumpTimeLeft:0,
+          tendedTime:0, neglectTime:0,
+        };
+        toast(`🌱 Dr. Mary Jane planted ${strain.name} at Table ${ti+1} to keep up with demand.`, 'good', 'staff_plant');
+        return;
+      }
+    }
+  }
+}
+// Same as finishSpray() but without the toast, since the grower already
+// announces their own actions in the calling code.
+function finishSprayQuiet(p){
+  const strain = strainById(p.strainId);
+  const gt = growTimeFor(strain);
+  if(p.elapsed >= gt){
+    p.elapsed = gt;
+    p.harvestReady = true;
+  }
+}
+
+// Random robbery attempts get more frequent the hotter your heat is. A
+// hired security guard can stop one outright based on their success rate;
+// otherwise it's either petty theft (a few grams or spare cash) or a bigger
+// hit to the register.
+function maybeRollRobbery(dt){
+  state.robberyTimer -= dt;
+  if(state.robberyTimer > 0) return;
+  state.robberyTimer = 90 + Math.random()*90;
+  const chance = 0.15 + (state.heat/100)*0.25;
+  if(Math.random() > chance) return;
+
+  const securityState = state.staff.security;
+  if(securityState){
+    const def = STAFF_ROSTER[securityState.key];
+    if(Math.random() < def.successRate){
+      toast(`🛡️ ${def.name} stopped a robbery attempt!`, 'good', 'robbery_stopped');
+      return;
+    }
+  }
+  const big = Math.random() < 0.3;
+  if(big){
+    const loss = Math.round(state.cash * (0.15 + Math.random()*0.15));
+    state.cash = Math.max(0, state.cash - loss);
+    toast(`🚨 Robbed! Thugs got away with $${loss} from the register.`, 'bad', 'robbery_loss');
+  } else {
+    const strains = Object.keys(state.inventory).filter(k=>state.inventory[k].amount>0);
+    if(strains.length){
+      const sid = strains[Math.floor(Math.random()*strains.length)];
+      const amt = Math.min(state.inventory[sid].amount, Math.round(1+Math.random()*4));
+      state.inventory[sid].amount -= amt;
+      toast(`🚨 Someone swiped ${amt}g of ${strainById(sid).name} off the counter.`, 'bad', 'robbery_loss');
+    } else {
+      const loss = Math.round(5+Math.random()*15);
+      state.cash = Math.max(0, state.cash - loss);
+      toast(`🚨 Petty theft — lost $${loss} in loose change.`, 'bad', 'robbery_loss');
+    }
+  }
+}
+
+// One-shot warning modal for hired-staff problems (out of stock, no sprays,
+// no jar room). Only fires once per day per issue so it doesn't spam.
+function staffWarnOnce(key, msg){
+  if(state.staffWarned[key]) return;
+  state.staffWarned[key] = true;
+  showStaffWarning(msg);
+  pushNotification('🗣️ '+msg, 'bad');
+}
+function showStaffWarning(msg){
+  document.getElementById('staffWarnText').textContent = msg;
+  document.getElementById('staffWarnOverlay').style.display = 'flex';
+}
+function closeStaffWarn(){
+  document.getElementById('staffWarnOverlay').style.display = 'none';
 }
 
 /* ---------------- GAME LOOP ---------------- */
@@ -788,7 +1771,7 @@ function tick(dt){
   if(state.dayTimer >= state.dayLength){
     state.dayTimer = 0;
     state.day++;
-    const rent = 15 + state.upgrades.pots*4;
+    const rent = 15 + state.tables.length*4;
     if(state.cash < rent){
       toast(`📅 Day ${state.day} — couldn't cover the full $${rent} rent!`, 'bad');
       state.heat = Math.min(100, state.heat + 8); // falling behind draws attention
@@ -797,38 +1780,117 @@ function tick(dt){
     }
     state.cash = Math.max(0, state.cash - rent);
     state.heat = Math.max(0, state.heat - 12);
+    state.staffWarned = {}; // let daily warnings repeat if the problem persists
+    if(state.staff.grower){
+      const def = STAFF_ROSTER[state.staff.grower.key];
+      if(def.dailyBonus){
+        state.cash += def.dailyBonus;
+        toast(`💵 ${def.name} reinvested wisely — +$${def.dailyBonus} profit`, 'good');
+      }
+    }
   }
 
   // heat natural decay
   state.heat = Math.max(0, state.heat - dt*0.15);
 
-  // customer spawn timer
-  state.customerTimer -= dt;
-  if(state.customerTimer <= 0 && state.customers.length < 4){
-    spawnCustomer();
-    state.customerTimer = 7 + Math.random()*8;
+  tickStaff(dt);
+  maybeRollRobbery(dt);
+
+  // customer spawn timer — only while the shop is open, and reputation (plus
+  // a hired promoter) controls how fast traffic actually shows up
+  if(state.shopOpen){
+    state.customerTimer -= dt;
+    if(state.customerTimer <= 0 && state.customers.length < maxConcurrentCustomers()){
+      spawnCustomer();
+      let interval = (7 + Math.random()*8) * repTrafficMultiplier();
+      if(state.staff.promoter) interval *= STAFF_ROSTER[state.staff.promoter.key].trafficMult;
+      state.customerTimer = interval;
+    }
   }
-  // customer patience
+  // customer patience — walking out empty-handed because you were out of
+  // stock stings your reputation a lot harder than just being ignored
   for(let i=state.customers.length-1;i>=0;i--){
     const c = state.customers[i];
     c.patience -= dt;
     if(c.patience<=0){
+      const haveAmt = state.inventory[c.strainId] ? state.inventory[c.strainId].amount : 0;
+      const outOfStock = haveAmt < c.qty;
       state.customers.splice(i,1);
-      state.rep = Math.max(0, state.rep-1);
+      if(outOfStock){
+        addRep(-3);
+        toast(`😠 ${c.name} left angry — out of ${strainById(c.strainId).name}. Reputation took a hit.`, 'bad');
+      } else {
+        addRep(-1);
+      }
     }
   }
 
-  // pots growth
-  for(let i=0;i<state.pots.length;i++){
-    const container = state.pots[i];
-    for(let s=0;s<container.length;s++){
-      const p = container[s];
-      if(!p || p.harvestReady) continue;
+  // grow room: tables -> pot slots -> plants
+  for(let ti=0; ti<state.tables.length; ti++){
+    const table = state.tables[ti];
+    for(let si=0; si<table.pots.length; si++){
+      const pot = table.pots[si];
+      if(!pot || !pot.plant) continue;
+      const p = pot.plant;
+      if(p.tendedTime === undefined) p.tendedTime = 0;
+      if(p.neglectTime === undefined) p.neglectTime = 0;
       const strain = strainById(p.strainId);
       const gt = growTimeFor(strain);
-      // health decay if not watered recently; runner auto-waters
-      if(state.upgrades.runner>=1){
-        p.health = Math.min(100, p.health + dt*3);
+      const autoWater = !!state.staff.grower || p.pumpTimeLeft>0;
+      if(p.pumpTimeLeft>0) p.pumpTimeLeft = Math.max(0, p.pumpTimeLeft - dt);
+
+      if(p.harvestReady){
+        // Mold risk builds the longer a mature plant sits uncollected.
+        if(p.mold){
+          p.moldActiveTimer += dt;
+          const ruinChancePerSec = Math.min(0.05, 0.001*p.moldActiveTimer);
+          if(p.moldActiveTimer > 15 && Math.random() < ruinChancePerSec*dt){
+            consumePotSession(table, pot, ti, si, `🦠 The batch rotted away completely — a total loss!`);
+          }
+        } else if(!p.protected){
+          p.moldTimer += dt;
+          if(p.moldTimer > 25){
+            const overdue = p.moldTimer - 25;
+            const chancePerSec = Math.min(0.03, 0.002*overdue);
+            if(Math.random() < chancePerSec*dt){
+              p.mold = true;
+              toast(`🦠 Mold outbreak on your ${strain.name}!`, 'bad');
+            }
+          }
+        }
+        continue;
+      }
+
+      // water tank: auto-water keeps it full; otherwise it drains over time
+      // and growth pauses whenever it's empty.
+      if(autoWater){
+        p.waterLevel = 100;
+      } else if(p.waterLevel > 0){
+        p.waterLevel = Math.max(0, p.waterLevel - dt*(100/WATER_DRAIN_SECONDS));
+      }
+
+      // Tracks how attentively this plant has actually been cared for — kept
+      // topped up (or covered by an active Da Pump) counts as tended, sitting
+      // bone dry counts as neglect. This feeds directly into mite risk below:
+      // a plant you're actively watering is meaningfully safer than one left
+      // to dry out, on top of the usual stage-based risk.
+      if(p.pumpTimeLeft > 0 || p.waterLevel >= 90){
+        p.tendedTime += dt;
+      } else if(p.waterLevel <= 0){
+        p.neglectTime += dt;
+      }
+
+      // A completely dry pot halts growth entirely, which would otherwise
+      // let a truly abandoned plant dodge the later (riskier) stage rolls
+      // just by never reaching them. This separate, ongoing check makes
+      // sure sitting neglected is never the "safe" choice.
+      if(!p.mites && !p.mold && !p.protected && p.waterLevel<=0 && p.neglectTime>10){
+        const dryChancePerSec = Math.min(0.008, 0.0004*(p.neglectTime-10));
+        if(Math.random() < dryChancePerSec*dt) infestPlant(p);
+      }
+
+      if(p.waterLevel > 0){
+        p.health = Math.min(100, p.health + dt*2);
       } else {
         p.health = Math.max(0, p.health - dt*0.8);
       }
@@ -836,11 +1898,13 @@ function tick(dt){
         p.health = Math.max(0, p.health - dt*1.2); // pests do extra damage
       }
       if(p.health<=0){
-        container[s] = null;
+        consumePotSession(table, pot, ti, si, `💀 A plant died from neglect.`);
         continue;
       }
-      // growth pauses entirely while infested — spraying is required to continue
-      if(!p.mites){
+
+      // growth pauses entirely while infested, or while the pot is dry —
+      // spraying/refilling is required to continue
+      if(!p.mites && p.waterLevel > 0){
         p.elapsed += dt * (p.health>40?1:0.4);
       }
       const pct = p.elapsed/gt;
@@ -871,13 +1935,28 @@ function tick(dt){
 let saveTimer = 0;
 let lastStructureSig = '';
 
+// Encodes each slot's structural state so we know when a full rebuild is
+// needed: no pot / pot-no-plant / growing (+ dry/full water threshold) /
+// mites / mold / ready. Continuous changes (bar widths draining) don't
+// change this string, so they never trigger a button-recreating rebuild.
+function slotCode(pot){
+  if(!pot) return 'X';
+  if(!pot.plant) return 'O';
+  const p = pot.plant;
+  if(p.mold) return 'D';
+  if(p.mites) return 'M';
+  if(p.harvestReady) return 'R';
+  const dry = p.waterLevel<=0 ? 'y' : 'n';
+  const full = p.waterLevel>=100 ? 'f' : 'p';
+  return 'G'+dry+full;
+}
 function structureSignature(){
   const custSig = state.customers.map(c=>c.id).join(',');
-  const potSig = state.pots.map(container =>
-    container.map(p => p ? (p.mites?'M':(p.harvestReady?'R':'G')) : 'E').join('')
-  ).join('|');
+  const tableSig = state.tables.map(t => t.pots.map(slotCode).join('')).join('|');
   const jarSig = state.jars.map(j=> j.elapsed>=j.cureNeeded ? 'R':'G').join(',');
-  return custSig+'||'+potSig+'||'+jarSig;
+  const staffSig = ['security','promoter','sales','grower'].map(r => state.staff[r]? state.staff[r].key : 'x').join(',');
+  const growerAt = state.staff.grower ? state.staff.grower.atTable : 'x';
+  return custSig+'||'+tableSig+'||'+jarSig+'||'+staffSig+'||'+growerAt+'||'+(state.shopOpen?'open':'closed');
 }
 
 function simTick(){
@@ -912,8 +1991,9 @@ function updateHeaderAndDots(){
   document.getElementById('xpFill').style.width = Math.min(100,(state.xp/xpNeeded)*100) + '%';
 
   document.getElementById('dotShop').classList.toggle('show', state.customers.some(c=>c.patience/c.maxPatience<0.4));
-  document.getElementById('dotGrow').classList.toggle('show', state.pots.some(container=>container.some(p=>p && (p.harvestReady || p.mites))));
+  document.getElementById('dotGrow').classList.toggle('show', state.tables.some(t=>t.pots.some(pot=>pot && pot.plant && (pot.plant.harvestReady || pot.plant.mites || pot.plant.mold))));
   document.getElementById('dotCure').classList.toggle('show', state.jars.some(j=>j.elapsed>=j.cureNeeded));
+  updateNotifDot();
 }
 
 // Lightweight per-tick update: only style.width / textContent on elements
@@ -939,10 +2019,11 @@ function updateLiveBars(){
     }
   });
 
-  state.pots.forEach((container,i)=>{
-    container.forEach((p,s)=>{
-      if(!p) return;
-      const key = `${i}_${s}`;
+  state.tables.forEach((table,ti)=>{
+    table.pots.forEach((pot,si)=>{
+      if(!pot || !pot.plant) return;
+      const p = pot.plant;
+      const key = `${ti}_${si}`;
       const strain = strainById(p.strainId);
       const gt = growTimeFor(strain);
       const pct = Math.min(100, (p.elapsed/gt)*100);
@@ -950,11 +2031,13 @@ function updateLiveBars(){
       if(growBar) growBar.style.width = pct+'%';
       const healthBar = document.querySelector(`[data-pot-health="${key}"]`);
       if(healthBar){ healthBar.style.width = p.health+'%'; healthBar.classList.toggle('low', p.health<35); }
+      const waterBar = document.querySelector(`[data-pot-water="${key}"]`);
+      if(waterBar) waterBar.style.width = p.waterLevel+'%';
       const stageLbl = document.querySelector(`[data-pot-stage="${key}"]`);
       const emojiEl = document.querySelector(`[data-pot-emoji="${key}"]`);
-      if(stageLbl && emojiEl && !p.mites){
+      if(stageLbl && emojiEl && !p.mites && !p.mold && !p.harvestReady && p.waterLevel>0){
         const info = stageInfo(p, strain);
-        stageLbl.textContent = info.label;
+        stageLbl.textContent = info.label + (p.protected?' · 🐝 protected':'');
         emojiEl.textContent = info.emoji;
       }
     });
@@ -971,19 +2054,45 @@ function updateLiveBars(){
 
 function render(){
   updateHeaderAndDots();
+  renderRepBar();
 
   renderCustomers();
   renderPots();
   renderJarsAndInventory();
+  renderTableShop();
+  renderPotShop();
   renderUpgrades();
   renderProducts();
+  renderStaffShop();
   renderStats();
 
   lastStructureSig = structureSignature();
 }
 
+function renderRepBar(){
+  const numEl = document.getElementById('repNum');
+  const fillEl = document.getElementById('repFill');
+  const noteEl = document.getElementById('repNote');
+  const toggleBtn = document.getElementById('shopToggleBtn');
+  if(!numEl) return;
+  numEl.textContent = Math.round(state.rep);
+  fillEl.style.width = state.rep + '%';
+  let note;
+  if(state.rep >= 60) note = '🔥 Great reputation — customers are pouring in.';
+  else if(state.rep >= 30) note = '🙂 Solid reputation — steady traffic.';
+  else if(state.rep >= 10) note = '😐 Shaky reputation — traffic is a little slow.';
+  else note = '💀 Reputation is in the gutter — barely anyone shows up.';
+  noteEl.textContent = note;
+  toggleBtn.textContent = state.shopOpen ? 'Close Shop' : 'Open Shop';
+  toggleBtn.classList.toggle('secondary', state.shopOpen);
+}
+
 function renderCustomers(){
   const el = document.getElementById('customerList');
+  if(!state.shopOpen){
+    el.innerHTML = `<div class="empty"><span class="emoji">🔒</span>Your shop is closed.<br>Tap "Open Shop" above to start taking customers.</div>`;
+    return;
+  }
   if(state.customers.length===0){
     el.innerHTML = `<div class="empty"><span class="emoji">🚪</span>No customers right now.<br>Check back soon.</div>`;
     return;
@@ -1022,92 +2131,224 @@ function stageInfo(p, strain){
 
 function renderPots(){
   const el = document.getElementById('potsGrid');
-  let html = '';
-  for(let i=0;i<state.pots.length;i++){
-    const container = state.pots[i];
-    if(container.length > 1){
-      html += renderTentCard(i, container);
-      continue;
-    }
-    const p = container[0];
-    if(!p){
-      const unlocked = unlockedStrains().filter(s => (state.seeds[s.id]||0) > 0);
-      html += `<div class="pot">
-        <div class="lockedPot">
-          <span class="emoji">🪴</span>
-          <span style="font-size:11px;">Empty pot</span>
-          <div class="seedPicker">
-            ${unlocked.length? unlocked.map(s=>`<button class="seedChip" onclick="plantSeed(${i},0,'${s.id}')">${s.emoji} ${s.name} (${state.seeds[s.id]})</button>`).join('')
-              : `<span style="font-size:10px;color:var(--text-dim);">Buy seeds in Cure tab</span>`}
-          </div>
-        </div>
-      </div>`;
-      continue;
-    }
-    const strain = strainById(p.strainId);
-    const gt = growTimeFor(strain);
-    const pct = Math.min(100, (p.elapsed/gt)*100);
-    const info = p.mites ? { emoji:'🐛', label:'Mites!' } : stageInfo(p, strain);
-    let actionHtml;
-    if(p.mites){
-      actionHtml = `<button class="btn small full miteBtn" ${state.products.fmites>0?'':'disabled'} onclick="sprayMites(${i},0)">🧪 Spray F-Mites</button>`;
-    } else if(p.harvestReady){
-      actionHtml = `<button class="btn small full" onclick="harvestPot(${i},0)">Harvest</button>`;
-    } else {
-      actionHtml = `<button class="btn small secondary full" onclick="waterPot(${i},0)" ${state.upgrades.runner>=1?'disabled':''}>${state.upgrades.runner>=1?'Auto-watered':'💧 Water'}</button>`;
-    }
-    html += `<div class="pot ${p.harvestReady?'readyGlow':''} ${p.mites?'miteGlow':''}">
-      <div class="stageLbl" data-pot-stage="${i}_0">${info.label}</div>
-      <span class="plantEmoji" data-pot-emoji="${i}_0">${info.emoji}</span>
-      <div class="plantName">${strain.name}</div>
-      <div class="growTrack"><div class="growFill" data-pot-grow="${i}_0" style="width:${pct}%"></div></div>
-      <div class="healthTrack"><div class="healthFill ${p.health<35?'low':''}" data-pot-health="${i}_0" style="width:${p.health}%"></div></div>
-      ${actionHtml}
-    </div>`;
-  }
-  el.innerHTML = html;
+  el.innerHTML = state.tables.map((table,ti)=>renderTableCard(table,ti)).join('');
 }
 
-// Grow tents keep the same grid footprint as a single pot, but hold 3
-// independent plant slots stacked compactly inside the one card.
-function renderTentCard(i, container){
-  const slotsHtml = container.map((p, s)=>{
-    if(!p){
-      const unlocked = unlockedStrains().filter(st => (state.seeds[st.id]||0) > 0);
-      return `<div class="tentSlot empty">
-        <span class="mini-emoji">🪴</span>
-        <div class="seedPicker mini">
-          ${unlocked.length? unlocked.map(st=>`<button class="seedChip mini" onclick="plantSeed(${i},${s},'${st.id}')">${st.emoji}${state.seeds[st.id]}</button>`).join('')
-            : `<span style="font-size:8px;color:var(--text-dim);">No seeds</span>`}
-        </div>
-      </div>`;
-    }
-    const strain = strainById(p.strainId);
-    const gt = growTimeFor(strain);
-    const pct = Math.min(100, (p.elapsed/gt)*100);
-    const info = p.mites ? { emoji:'🐛', label:'Mites' } : stageInfo(p, strain);
-    let actionHtml;
-    if(p.mites){
-      actionHtml = `<button class="btn small miteBtn" ${state.products.fmites>0?'':'disabled'} onclick="sprayMites(${i},${s})">🧪 Spray</button>`;
-    } else if(p.harvestReady){
-      actionHtml = `<button class="btn small" onclick="harvestPot(${i},${s})">Harvest</button>`;
-    } else {
-      actionHtml = `<button class="btn small secondary" onclick="waterPot(${i},${s})" ${state.upgrades.runner>=1?'disabled':''}>${state.upgrades.runner>=1?'Auto':'💧'}</button>`;
-    }
-    return `<div class="tentSlot ${p.harvestReady?'ready':''} ${p.mites?'infested':''}">
-      <span class="mini-emoji" data-pot-emoji="${i}_${s}">${info.emoji}</span>
-      <div class="mini-name">${strain.name}</div>
-      <div class="mini-track"><div class="mini-fill" data-pot-grow="${i}_${s}" style="width:${pct}%"></div></div>
-      ${actionHtml}
-    </div>`;
-  }).join('');
-  return `<div class="pot tentCard">
-    <div class="stageLbl">⛺ Grow Tent</div>
-    <div class="tentSlots">${slotsHtml}</div>
+function growerActionAt(ti){
+  const table = state.tables[ti];
+  if(table.pots.some(p=>p && p.plant && (p.plant.mites || p.plant.mold))) return 'curing';
+  if(table.pots.some(p=>p && p.plant && p.plant.harvestReady)) return 'harvesting';
+  if(table.pots.some(p=>p && p.plant && !p.plant.harvestReady)) return 'watering';
+  return 'checking in';
+}
+
+function renderTableCard(table, ti){
+  const tierInfo = TABLE_TIERS[table.tier];
+  const pumpKey = bestOwnedPump();
+  const slotsHtml = table.pots.map((pot,si)=>renderPotSlot(ti, si, pot)).join('');
+  const grower = state.staff.grower;
+  const growerHere = grower && grower.atTable === ti;
+  const growerBadge = growerHere
+    ? `<div class="staffHereBadge">👩‍🌾 ${STAFF_ROSTER[grower.key].name} is ${growerActionAt(ti)}</div>`
+    : '';
+  return `<div class="card tableCard">
+    <div class="tableHead">
+      <div class="tableName">🪑 Table ${ti+1} <span class="tierTag">${tierInfo.name}</span></div>
+      ${pumpKey ? `<button class="btn small pumpBtn" onclick="usePumpAuto(${ti})">💦 Pump</button>` : ''}
+    </div>
+    ${growerBadge}
+    <div class="tableSlots">${slotsHtml}</div>
   </div>`;
 }
 
+// A slot goes through three states: no pot placed -> pot placed, empty ->
+// pot placed, growing a plant. Each state shows only the controls relevant
+// to it (place a pot / plant a seed / water & treat & harvest).
+function renderPotSlot(ti, si, pot){
+  if(!pot){
+    const owned = Object.keys(POT_TYPES).filter(k => (state.potsOwned[k]||0) > 0);
+    return `<div class="slotRow emptySlot">
+      <span class="slotEmoji">➕</span>
+      <div class="slotBody">
+        <div class="slotLabelPlain">No pot placed on this table</div>
+        <div class="seedPicker mini">
+          ${owned.length? owned.map(k=>`<button class="seedChip mini" onclick="placePot(${ti},${si},'${k}')">${POT_TYPES[k].icon} ${POT_TYPES[k].name} (${state.potsOwned[k]})</button>`).join('')
+            : `<span class="mutedNote">Buy pots in the Market</span>`}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const potType = POT_TYPES[pot.potType];
+
+  if(!pot.plant){
+    const unlocked = unlockedStrains().filter(s => (state.seeds[s.id]||0) > 0 && strainAllowedInPot(s, pot.potType));
+    return `<div class="slotRow">
+      <span class="slotEmoji">${potType.icon}</span>
+      <div class="slotBody">
+        <div class="slotTop"><span class="plantName">${potType.name}</span><span class="sessTag">${pot.sessionsLeft} sessions left</span></div>
+        <div class="seedPicker mini">
+          ${unlocked.length? unlocked.map(s=>`<button class="seedChip mini" onclick="plantSeed(${ti},${si},'${s.id}')">${s.emoji} ${s.name} (${state.seeds[s.id]})</button>`).join('')
+            : `<span class="mutedNote">No compatible seeds owned</span>`}
+        </div>
+      </div>
+      <div class="slotActions">
+        <button class="btn small secondary trashBtn" onclick="trashPot(${ti},${si})">🗑️ Trash</button>
+      </div>
+    </div>`;
+  }
+
+  const p = pot.plant;
+  const strain = strainById(p.strainId);
+  const gt = growTimeFor(strain);
+  const pct = Math.min(100, (p.elapsed/gt)*100);
+  const info = stageInfo(p, strain);
+  const emoji = p.mold ? '🦠' : (p.mites ? '🐛' : info.emoji);
+  const autoWater = !!state.staff.grower || p.pumpTimeLeft>0;
+
+  let statusHtml, actionHtml, extraHtml = '';
+  if(p.mold){
+    statusHtml = `<span class="statusTag moldTag">🦠 Moldy — needs treatment</span>`;
+    actionHtml = `<button class="btn small moldBtn" ${state.products.moldbgon>0?'':'disabled'} onclick="sprayMoldBGon(${ti},${si})">Mold B'Gon</button>`;
+  } else if(p.mites){
+    statusHtml = `<span class="statusTag miteTag">🐛 Mites — needs treatment</span>`;
+    actionHtml = `<button class="btn small miteBtn" ${state.products.fmites>0?'':'disabled'} onclick="sprayMites(${ti},${si})">Spray F-Mites</button>`;
+  } else if(p.harvestReady){
+    statusHtml = `<span class="statusTag readyTag">✨ Ready to harvest</span>`;
+    actionHtml = `<button class="btn small" onclick="harvestPot(${ti},${si})">Harvest</button>`;
+  } else if(p.waterLevel <= 0){
+    statusHtml = `<span class="statusTag dryTag" data-pot-stage="${ti}_${si}">${p.elapsed<=0? '💧 Needs water to start growing' : '💧 Out of water — wilting!'}</span>`;
+    actionHtml = `<button class="btn small waterBtn" onclick="waterPot(${ti},${si})" ${autoWater?'disabled':''}>${autoWater?'Auto':'💧 Water'}</button>`;
+  } else {
+    statusHtml = `<span class="statusTag" data-pot-stage="${ti}_${si}">${info.label}${p.protected?' · 🐝 protected':''}</span>`;
+    const full = p.waterLevel >= 100;
+    actionHtml = `<button class="btn small secondary waterBtn" onclick="waterPot(${ti},${si})" ${autoWater||full?'disabled':''}>${autoWater?'Auto':(full?'💧 Full':'💧 Water')}</button>`;
+    const groKey = bestOwnedGro();
+    const utilBtns = [];
+    if(!p.protected && state.products.killa>0) utilBtns.push(`<button class="btn small killaBtn" onclick="useKilla(${ti},${si})">🐝 Killa</button>`);
+    if(groKey) utilBtns.push(`<button class="btn small groBtn" onclick="useGroAuto(${ti},${si})">🌿 Gro!</button>`);
+    if(utilBtns.length) extraHtml = `<div class="utilRow">${utilBtns.join('')}</div>`;
+  }
+
+  return `<div class="slotRow ${p.harvestReady?'ready':''} ${p.mites?'infested':''} ${p.mold?'moldy':''}">
+    <span class="slotEmoji" data-pot-emoji="${ti}_${si}">${emoji}</span>
+    <div class="slotBody">
+      <div class="slotTop"><span class="plantName">${strain.name}</span><span class="sessTag">${potType.icon} ${pot.sessionsLeft} left</span></div>
+      ${statusHtml}
+      <div class="mini-track"><div class="mini-fill" data-pot-grow="${ti}_${si}" style="width:${pct}%"></div></div>
+      <div class="mini-track water-track"><div class="mini-fill water-fill" data-pot-water="${ti}_${si}" style="width:${p.waterLevel}%"></div></div>
+      <div class="mini-track health-track"><div class="mini-fill health-fill ${p.health<35?'low':''}" data-pot-health="${ti}_${si}" style="width:${p.health}%"></div></div>
+    </div>
+    <div class="slotActions">
+      ${actionHtml}
+      ${extraHtml}
+    </div>
+  </div>`;
+}
+
+function renderTableShop(){
+  const el = document.getElementById('tableShopCard');
+  const addCost = tableCountCost();
+  const upgradeIdx = nextTableToUpgrade();
+  let upgradeCardHtml;
+  if(upgradeIdx === -1){
+    upgradeCardHtml = `<div class="card upgradeCard">
+      <div class="upgIcon">⬆️</div>
+      <div class="upgInfo"><div class="name">Upgrade a Table</div><div class="desc">All your tables are already at the top tier.</div></div>
+      <button class="btn small" disabled>Max</button>
+    </div>`;
+  } else {
+    const curTier = TABLE_TIERS[state.tables[upgradeIdx].tier];
+    const nextTier = TABLE_TIERS[state.tables[upgradeIdx].tier+1];
+    const locked = state.level < nextTier.unlockLvl;
+    const cost = tableUpgradeCost();
+    upgradeCardHtml = `<div class="card upgradeCard ${locked?'locked':''}">
+      <div class="upgIcon">⬆️</div>
+      <div class="upgInfo">
+        <div class="name">Upgrade Table ${upgradeIdx+1}</div>
+        <div class="desc">${curTier.name} (${curTier.capacity} pot${curTier.capacity>1?'s':''}) → ${nextTier.name} (${nextTier.capacity} pots)</div>
+        ${locked? `<div class="desc" style="color:var(--accent-amber);">🔒 Unlocks at level ${nextTier.unlockLvl}</div>`:''}
+      </div>
+      <button class="btn small" ${locked||state.cash<cost?'disabled':''} onclick="buyTableTier()">${locked?'Lv.'+nextTier.unlockLvl:fmtMoney(cost)}</button>
+    </div>`;
+  }
+  el.innerHTML = `
+    <div class="card upgradeCard">
+      <div class="upgIcon">🪑</div>
+      <div class="upgInfo"><div class="name">Add a Table <span class="lvl">Own ${state.tables.length}</span></div><div class="desc">Adds another basic table to your grow room.</div></div>
+      <button class="btn small" ${state.cash<addCost?'disabled':''} onclick="buyTable()">${fmtMoney(addCost)}</button>
+    </div>
+    ${upgradeCardHtml}`;
+}
+
+function renderPotShop(){
+  const el = document.getElementById('potShopCard');
+  el.innerHTML = Object.keys(POT_TYPES).map(key=>{
+    const pt = POT_TYPES[key];
+    const owned = state.potsOwned[key]||0;
+    const locked = pt.unlockLvl && state.level < pt.unlockLvl;
+    return `<div class="card upgradeCard ${locked?'locked':''}">
+      <div class="upgIcon">${pt.icon}</div>
+      <div class="upgInfo">
+        <div class="name">${pt.name} <span class="lvl">Own ${owned}</span></div>
+        <div class="desc">${pt.desc}</div>
+        ${locked? `<div class="desc" style="color:var(--accent-amber);">🔒 Unlocks at level ${pt.unlockLvl}</div>` : ''}
+      </div>
+      <button class="btn small" ${locked||state.cash<pt.cost?'disabled':''} onclick="buyPot('${key}')">${locked?'Lv.'+pt.unlockLvl:fmtMoney(pt.cost)}</button>
+    </div>`;
+  }).join('');
+}
+
+const STAFF_ROLE_ICONS = { security:'🛡️', promoter:'📣', sales:'💵', grower:'🌱' };
+const STAFF_ROLE_LABELS = { security:'Security', promoter:'Promoter', sales:'Budtender', grower:'Grower' };
+
+function renderStaffShop(){
+  const el = document.getElementById('staffShopCard');
+  const roles = ['security','promoter','sales','grower'];
+  el.innerHTML = roles.map(role=>{
+    const current = state.staff[role];
+    let body;
+    if(current){
+      const def = STAFF_ROSTER[current.key];
+      const mins = Math.ceil(current.timeLeft/60);
+      body = `<div class="card staffCard">
+        <div class="upgIcon">${STAFF_ROLE_ICONS[role]}</div>
+        <div class="upgInfo">
+          <div class="name">${def.name} <span class="staffTimeLeft">~${mins} min left</span></div>
+          <div class="staffFlavor">${def.flavor}</div>
+        </div>
+        <button class="btn small secondary" onclick="fireStaff('${role}')">Let Go</button>
+      </div>`;
+    } else {
+      body = staffByRole(role).map(key=>{
+        const def = STAFF_ROSTER[key];
+        const locked = state.level < def.unlockLvl;
+        return `<div class="card staffCard ${locked?'locked':''}">
+          <div class="upgIcon">${STAFF_ROLE_ICONS[role]}</div>
+          <div class="upgInfo">
+            <div class="name">${def.name}</div>
+            <div class="staffFlavor">${def.flavor}</div>
+            ${locked? `<div class="desc" style="color:var(--accent-amber);">🔒 Unlocks at level ${def.unlockLvl}</div>`:''}
+          </div>
+          <button class="btn small" ${locked||state.cash<def.cost?'disabled':''} onclick="hireStaff('${key}')">${locked?'Lv.'+def.unlockLvl:fmtMoney(def.cost)}</button>
+        </div>`;
+      }).join('');
+    }
+    return `<div class="staffRoleTitle">${STAFF_ROLE_ICONS[role]} ${STAFF_ROLE_LABELS[role]}</div>${body}`;
+  }).join('');
+}
+
 function renderJarsAndInventory(){
+  const capEl = document.getElementById('jarCapacityNote');
+  if(capEl){
+    const cap = jarCapacity();
+    const full = state.jars.length >= cap;
+    capEl.textContent = `Curing slots: ${state.jars.length}/${cap} in use${full? ' — full! Collect or upgrade Weed Jars to harvest more.':'.'}`;
+    capEl.classList.toggle('warnNote', full);
+  }
+  const readyCount = state.jars.filter(j=>j.elapsed >= j.cureNeeded).length;
+  const collectAllBtn = document.getElementById('collectAllBtn');
+  if(collectAllBtn) collectAllBtn.style.display = readyCount >= 4 ? 'inline-block' : 'none';
   const jarEl = document.getElementById('jarList');
   if(state.jars.length===0){
     jarEl.innerHTML = `<div class="empty"><span class="emoji">🫙</span>No buds curing right now.<br>Harvest something in the Grow Room.</div>`;
@@ -1167,14 +2408,15 @@ function renderUpgrades(){
     const u = UPGRADES[key];
     const lvl = state.upgrades[key];
     const locked = u.unlockLvl && state.level < u.unlockLvl;
-    const tentCapped = key==='tent' && state.upgrades.tent >= state.upgrades.pots;
-    const maxed = lvl >= u.max || tentCapped;
+    const maxed = lvl >= u.max;
+    const levelCap = Math.min(u.max, maxUpgradeLevelForPlayer());
+    const cappedByPlayerLevel = !maxed && lvl >= levelCap;
     const cost = upgradeCost(key);
 
     let btnLabel, btnDisabled;
     if(locked){ btnLabel = `Lv.${u.unlockLvl}`; btnDisabled = true; }
-    else if(tentCapped && lvl < u.max){ btnLabel = 'Need pots'; btnDisabled = true; }
     else if(maxed){ btnLabel = 'Max'; btnDisabled = true; }
+    else if(cappedByPlayerLevel){ btnLabel = `Lv.${lvl+1}`; btnDisabled = true; }
     else { btnLabel = fmtMoney(cost); btnDisabled = state.cash < cost; }
 
     return `<div class="card upgradeCard ${locked?'locked':''}">
@@ -1184,6 +2426,7 @@ function renderUpgrades(){
         <div class="desc">${u.desc}</div>
         <div class="desc" style="color:var(--accent-green);">${u.effect}</div>
         ${locked? `<div class="desc" style="color:var(--accent-amber);">🔒 Unlocks at level ${u.unlockLvl}</div>` : ''}
+        ${cappedByPlayerLevel? `<div class="desc" style="color:var(--accent-amber);">🔒 Reach level ${lvl+1} to upgrade further</div>` : ''}
       </div>
       <button class="btn small" ${btnDisabled?'disabled':''} onclick="buyUpgrade('${key}')">${btnLabel}</button>
     </div>`;
@@ -1195,13 +2438,15 @@ function renderProducts(){
   el.innerHTML = Object.keys(PRODUCTS).map(key=>{
     const p = PRODUCTS[key];
     const owned = state.products[key] || 0;
-    return `<div class="card upgradeCard">
+    const locked = p.unlockLvl && state.level < p.unlockLvl;
+    return `<div class="card upgradeCard ${locked?'locked':''}">
       <div class="upgIcon">${p.icon}</div>
       <div class="upgInfo">
         <div class="name">${p.name} <span class="lvl">Own ${owned}</span></div>
         <div class="desc">${p.desc}</div>
+        ${locked? `<div class="desc" style="color:var(--accent-amber);">🔒 Unlocks at level ${p.unlockLvl}</div>` : ''}
       </div>
-      <button class="btn small" ${state.cash<p.cost?'disabled':''} onclick="buyProduct('${key}')">Buy ${fmtMoney(p.cost)}</button>
+      <button class="btn small" ${locked||state.cash<p.cost?'disabled':''} onclick="buyProduct('${key}')">${locked?'Lv.'+p.unlockLvl:'Buy '+fmtMoney(p.cost)}</button>
     </div>`;
   }).join('');
 }
@@ -1221,6 +2466,135 @@ function renderStats(){
       <span style="color:var(--text-dim);">${unlocked? fmtMoney(s.price)+'/g' : 'Unlocks at Lv.'+s.unlockLvl}</span>
     </div>`;
   }).join('');
+}
+
+/* ---------------- DEV CONSOLE ---------------- */
+// Hidden developer tool: click the logo 3 times in quick succession to
+// bring up a password prompt. Not real security (it's all client-side) —
+// just a QA/testing shortcut, gated behind an obscure trigger so ordinary
+// players don't stumble into it.
+const DEV_PASSWORD = 'grow420';
+let logoClickTimes = [];
+function handleLogoClick(){
+  const now = Date.now();
+  logoClickTimes.push(now);
+  logoClickTimes = logoClickTimes.filter(t => now - t < 1200);
+  if(logoClickTimes.length >= 3){
+    logoClickTimes = [];
+    openDevPassword();
+  }
+}
+function openDevPassword(){
+  document.getElementById('devPasswordInput').value = '';
+  document.getElementById('devPasswordError').textContent = '';
+  document.getElementById('devPasswordOverlay').style.display = 'flex';
+}
+function closeDevPassword(){
+  document.getElementById('devPasswordOverlay').style.display = 'none';
+}
+function submitDevPassword(){
+  const val = document.getElementById('devPasswordInput').value;
+  if(val === DEV_PASSWORD){
+    closeDevPassword();
+    openDevConsole();
+  } else {
+    document.getElementById('devPasswordError').textContent = 'Incorrect password.';
+  }
+}
+function openDevConsole(){
+  document.getElementById('devCashInput').value = Math.round(state.cash);
+  document.getElementById('devLevelInput').value = state.level;
+  document.getElementById('devDayInput').value = state.day;
+  document.getElementById('devRepInput').value = Math.round(state.rep);
+  document.getElementById('devUnlockAllCheckbox').checked = !!preUnlockAllSnapshot;
+  document.getElementById('devConsoleOverlay').style.display = 'flex';
+}
+function closeDevConsole(){
+  document.getElementById('devConsoleOverlay').style.display = 'none';
+}
+// Applies edited values back into state. Level/reputation are re-clamped to
+// valid ranges; lowering level doesn't strip anything already owned, but
+// every Market screen re-checks unlockLvl on render, so anything gated by a
+// higher level (strains, table tiers, staff hires) simply re-locks.
+function applyDevConsole(){
+  const cash = parseFloat(document.getElementById('devCashInput').value);
+  const level = parseInt(document.getElementById('devLevelInput').value, 10);
+  const day = parseInt(document.getElementById('devDayInput').value, 10);
+  const rep = parseFloat(document.getElementById('devRepInput').value);
+
+  if(!isNaN(cash)) state.cash = Math.max(0, Math.round(cash));
+  if(!isNaN(level)) state.level = Math.max(1, Math.round(level));
+  if(!isNaN(day)) state.day = Math.max(1, Math.round(day));
+  if(!isNaN(rep)) state.rep = Math.max(0, Math.min(100, Math.round(rep)));
+
+  closeDevConsole();
+  toast('🛠️ Dev changes applied', 'good');
+  render();
+}
+
+// "Unlock All" snapshots everything it's about to touch so unchecking puts
+// the game back exactly where it was — a quick sandbox toggle for testing
+// flow, not a permanent change.
+let preUnlockAllSnapshot = null;
+function toggleUnlockAll(checkbox){
+  if(checkbox.checked){
+    preUnlockAllSnapshot = {
+      level: state.level,
+      tables: JSON.parse(JSON.stringify(state.tables)),
+      potsOwned: JSON.parse(JSON.stringify(state.potsOwned)),
+      upgrades: JSON.parse(JSON.stringify(state.upgrades)),
+      products: JSON.parse(JSON.stringify(state.products)),
+      staff: JSON.parse(JSON.stringify(state.staff)),
+    };
+    applyUnlockAll();
+  } else {
+    if(preUnlockAllSnapshot){
+      state.level = preUnlockAllSnapshot.level;
+      state.tables = preUnlockAllSnapshot.tables;
+      state.potsOwned = preUnlockAllSnapshot.potsOwned;
+      state.upgrades = preUnlockAllSnapshot.upgrades;
+      state.products = preUnlockAllSnapshot.products;
+      state.staff = preUnlockAllSnapshot.staff;
+      preUnlockAllSnapshot = null;
+      toast('🛠️ Unlock All reverted — back to how it was.', 'good');
+    }
+    render();
+  }
+}
+function applyUnlockAll(){
+  // Bump level enough that nothing shows contradictory "locked" labels
+  // next to already-maxed stuff.
+  state.level = Math.max(state.level, 10);
+
+  // Every table maxed to the top tier, every open slot filled with a
+  // Master Pot so there's something to plant into immediately.
+  const topTier = TABLE_TIERS.length - 1;
+  state.tables.forEach(table=>{
+    table.tier = topTier;
+    while(table.pots.length < TABLE_TIERS[topTier].capacity) table.pots.push(null);
+    for(let si=0; si<table.pots.length; si++){
+      if(!table.pots[si]){
+        table.pots[si] = { potType:'master', sessionsLeft: POT_TYPES.master.sessions, plant:null };
+      }
+    }
+  });
+  state.potsOwned.master = (state.potsOwned.master||0) + 20;
+
+  // Equipment maxed out.
+  Object.keys(UPGRADES).forEach(key=>{ state.upgrades[key] = UPGRADES[key].max; });
+
+  // A big stack of every product.
+  Object.keys(PRODUCTS).forEach(key=>{ state.products[key] = 20; });
+
+  // The best staff in every role, hired for free with a full contract.
+  const bestByRole = { security:'bodyguard', promoter:'ferrari', sales:'phuk', grower:'maryjane' };
+  Object.keys(bestByRole).forEach(role=>{
+    const key = bestByRole[role];
+    state.staff[role] = { key, timeLeft: STAFF_ROSTER[key].duration };
+  });
+
+  toast('🛠️ Unlock All applied — everything maxed for testing.', 'good');
+  render();
 }
 
 /* ---------------- NAV ---------------- */
